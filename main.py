@@ -2,6 +2,14 @@ import flet as ft
 import base64
 import os
 
+import sys
+
+def get_asset_path(filename):
+    if getattr(sys, 'frozen', False):
+        base_path = os.path.join(sys._MEIPASS, "assets")
+    else: base_path = ""
+    return os.path.join(base_path, filename)
+
 def main(page: ft.Page):
     # audio_player = None  # To store the audio control
     page.theme_mode = ft.ThemeMode.DARK
@@ -15,7 +23,7 @@ def main(page: ft.Page):
         print("YEY :)")
         pass
 
-    lobbyDesing = ft.Image(src="Assets\music player.png")
+    lobbyDesing = ft.Image(src=get_asset_path("music player.png"))
     createPlaylist = ft.Container(bgcolor="transparent",width=150,height=20,left=20,top=140,padding=10,on_click=createPlaylistClicked)
     designStack = ft.Stack([lobbyDesing,createPlaylist])
     
