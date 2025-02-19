@@ -20,7 +20,9 @@ def main(page: ft.Page):
     page.window.resizable = False
     
     def createPlaylistClicked(e):
-        print("YEY :)")
+        lobbyDesing.src=get_asset_path("createPlaylist.png")
+
+        page.update()
         pass
 
     lobbyDesing = ft.Image(src=get_asset_path("music player.png"))
