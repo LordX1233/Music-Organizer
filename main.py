@@ -42,7 +42,7 @@ def main(page: ft.Page):
         print("choose the album cover")
         pass
 
-    lobbyDesing = ft.Image(src="Assets\music player.png")
+    lobbyDesing = ft.Image(src=get_asset_path("music player.png"))
     createPlaylistButton = ft.Container(bgcolor="transparent",width=150,height=20,left=20,top=140,padding=10,on_click=createPlaylistClicked) # The button to create the playlist on the home screen
     editPlaylistButton = ft.Container(bgcolor="transparent",width=100,height=20,left=25,top=180,padding=10,on_click=editPlaylistClicked) # The button to edit the playlist on the home screen
     songButton = ft.Container(bgcolor="transparent",width=50,height=20,left=25,top=275,padding=10,on_click=addSongClicked) # The songs text in the library
