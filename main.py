@@ -23,6 +23,12 @@ def main(page: ft.Page):
         lobbyDesing.src=get_asset_path("createPlaylist.png")
         playlistCoverButton.visible = True
         addSongButton.visible = False
+        playlistNameButton.visible = True
+        playlistDescriptionButton.visible = True
+        playlistSaveButton.visible = True
+        playButton.visible = False
+        PauseButton.visible = False
+        slider.visible = False 
         page.update()
         
 
@@ -42,14 +48,48 @@ def main(page: ft.Page):
         print("choose the album cover")
         pass
 
-    lobbyDesing = ft.Image(src=get_asset_path("music player.png"))
+    def saveClicked(e):
+        lobbyDesing.src=get_asset_path("Assets\music player.png")
+        playlistCoverButton.visible = False
+        playlistNameButton.visible = False
+        playlistDescriptionButton.visible = False
+        playlistSaveButton.visible = False
+        addSongButton.visible = True 
+        playButton.visible = True
+        slider.visible = True   
+        page.update()
+    
+    def musicPlay(e):
+        playButton.visible = False
+        PauseButton.visible = True
+        page.update()
+        pass
+
+    def musicPause(e):
+        playButton.visible = True
+        PauseButton.visible = False
+        page.update()
+        pass
+        
+
+    #? On the Home Screen
+    lobbyDesing = ft.Image(src=get_asset_path("Assets\music player.png"))
     createPlaylistButton = ft.Container(bgcolor="transparent",width=150,height=20,left=20,top=140,padding=10,on_click=createPlaylistClicked) # The button to create the playlist on the home screen
     editPlaylistButton = ft.Container(bgcolor="transparent",width=100,height=20,left=25,top=180,padding=10,on_click=editPlaylistClicked) # The button to edit the playlist on the home screen
     songButton = ft.Container(bgcolor="transparent",width=50,height=20,left=25,top=275,padding=10,on_click=addSongClicked) # The songs text in the library
     addSongButton = ft.Container(bgcolor="transparent",width=200,height=193,left=257,top=167,padding=10,on_click=songsClicked) # The + Square at home-screen
-    playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=playlistCoverClicked) # Too add a playlist cover when creating the playlist
+    playButton = ft.Container(content=ft.IconButton(icon=ft.Icons.PLAY_ARROW,on_click=musicPlay,icon_color="white"),bgcolor="transparent",left=384,top=13,padding=10,visible=True)
+    PauseButton = ft.Container(content=ft.IconButton(icon=ft.Icons.PAUSE_SHARP,on_click=musicPause,icon_color="white"),bgcolor="transparent",left=384,top=13,padding=10,visible=False)
+    slider = ft.Container(content=ft.Slider(min=0, max=100, label="{value}%",width=335),bgcolor="transparent",left=570,top=12,padding=10)
 
-    designStack = ft.Stack([lobbyDesing,createPlaylistButton,editPlaylistButton,addSongButton,songButton,playlistCoverButton])
+
+    #? When creating the playlist
+    playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=playlistCoverClicked) # Too add a playlist cover when creating the playlist
+    playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
+    playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
+    playlistSaveButton = ft.Container(content=ft.Button(text="Save Button",color="white",on_click=saveClicked,width=400),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
+
+    designStack = ft.Stack([lobbyDesing,createPlaylistButton,editPlaylistButton,addSongButton,songButton,playlistCoverButton,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,PauseButton,slider])
     
     page.add(designStack)
     page.update()
