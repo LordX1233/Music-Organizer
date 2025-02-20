@@ -21,13 +21,35 @@ def main(page: ft.Page):
     
     def createPlaylistClicked(e):
         lobbyDesing.src=get_asset_path("createPlaylist.png")
-
+        playlistCoverButton.visible = True
+        addSongButton.visible = False
         page.update()
+        
+
+    def editPlaylistClicked(e):
+        print("edit playlistClicked")
         pass
 
-    lobbyDesing = ft.Image(src=get_asset_path("music player.png"))
-    createPlaylist = ft.Container(bgcolor="transparent",width=150,height=20,left=20,top=140,padding=10,on_click=createPlaylistClicked)
-    designStack = ft.Stack([lobbyDesing,createPlaylist])
+    def addSongClicked(e):
+        print("Songs clicked")
+        pass
+
+    def songsClicked(e):
+        print("Add button clicked")
+        pass
+
+    def playlistCoverClicked(e):
+        print("choose the album cover")
+        pass
+
+    lobbyDesing = ft.Image(src="Assets\music player.png")
+    createPlaylistButton = ft.Container(bgcolor="transparent",width=150,height=20,left=20,top=140,padding=10,on_click=createPlaylistClicked) # The button to create the playlist on the home screen
+    editPlaylistButton = ft.Container(bgcolor="transparent",width=100,height=20,left=25,top=180,padding=10,on_click=editPlaylistClicked) # The button to edit the playlist on the home screen
+    songButton = ft.Container(bgcolor="transparent",width=50,height=20,left=25,top=275,padding=10,on_click=addSongClicked) # The songs text in the library
+    addSongButton = ft.Container(bgcolor="transparent",width=200,height=193,left=257,top=167,padding=10,on_click=songsClicked) # The + Square at home-screen
+    playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=playlistCoverClicked) # Too add a playlist cover when creating the playlist
+
+    designStack = ft.Stack([lobbyDesing,createPlaylistButton,editPlaylistButton,addSongButton,songButton,playlistCoverButton])
     
     page.add(designStack)
     page.update()
