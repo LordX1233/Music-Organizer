@@ -44,9 +44,23 @@ def main(page: ft.Page):
         print("Add button clicked")
         pass
 
-    def playlistCoverClicked(e):
+    def playlistCoverClicked(e, page, playlistCoverButton, coverImage):
         print("choose the album cover")
-        pass
+        
+        def fileSelected(e: ft.FilePickerResultEvent):
+            if e.files:
+                file = e.files[0]
+                playlistCoverButton.visible = False
+                coverImage.src = file.path
+                coverImage.visible = True
+            page.update()
+
+        filePicker = ft.FilePicker(on_result=fileSelected)
+        page.overlay.append(filePicker)
+        page.update() 
+
+        filePicker.pick_files(allow_multiple=False, allowed_extensions=["jpg", "png", "jpeg"])
+
 
     def saveClicked(e):
         lobbyDesing.src=get_asset_path("music player.png")
@@ -56,7 +70,8 @@ def main(page: ft.Page):
         playlistSaveButton.visible = False
         addSongButton.visible = True 
         playButton.visible = True
-        slider.visible = True   
+        slider.visible = True 
+        coverImage.visible = False 
         page.update()
     
     def musicPlay(e):
@@ -84,11 +99,12 @@ def main(page: ft.Page):
 
 
     #? When creating the playlist
-    playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=playlistCoverClicked) # Too add a playlist cover when creating the playlist
+    playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=lambda e: playlistCoverClicked(e, page, playlistCoverButton, coverImage)) # Too add a playlist cover when creating the playlist
+    coverImage = ft.Image(src="", width=240,height=240,left=366,top=25, visible=False, fit=ft.ImageFit.COVER) #to add a image
     playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
     playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
     playlistSaveButton = ft.Container(content=ft.FilledButton(text="Save Button",on_click=saveClicked,width=400),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
-    designStack = ft.Stack([lobbyDesing,createPlaylistButton,editPlaylistButton,addSongButton,songButton,playlistCoverButton,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,PauseButton,slider])
+    designStack = ft.Stack([lobbyDesing,createPlaylistButton,editPlaylistButton,addSongButton,songButton,playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,PauseButton,slider])
     
     page.add(designStack)
     page.update()
