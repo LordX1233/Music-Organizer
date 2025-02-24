@@ -2,7 +2,7 @@ import flet as ft
 
 def main(page: ft.Page):
     audio1 = ft.Audio(
-        src="/Users/macbook/Documents/PROGRAMS/STEAM/assets/press.wav", autoplay=True
+        src="/Users/macbook/Documents/PROGRAMS/Flet/Music-Organizer/Songs/19-2000.wav", autoplay=True
     )
     page.overlay.append(audio1)
     page.add(
