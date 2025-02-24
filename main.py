@@ -37,6 +37,8 @@ def main(page: ft.Page):
         coverImagePlaylist.visible = False
         songsQuantity.visible = False
         coverImage.visible = False
+        playListSongs.visible = False
+        librarySongs.visible = False
         page.update()
 
     def playlistScreen():
@@ -58,6 +60,8 @@ def main(page: ft.Page):
         forwardButton.visible = False
         shuffleButton.visible = False
         coverImage.visible = False
+        playListSongs.visible = False
+        librarySongs.visible = False
         
         page.update()
 
@@ -67,6 +71,8 @@ def main(page: ft.Page):
         playlistNameButton.visible = True
         playlistDescriptionButton.visible = True
         playlistSaveButton.visible = True
+        playListSongs.visible = True
+        librarySongs.visible = True
         addSongButton.visible = False
         playButton.visible = False
         PauseButton.visible = False
@@ -87,6 +93,8 @@ def main(page: ft.Page):
         playlistNameButton.visible = True
         playlistDescriptionButton.visible = True
         playlistSaveButton.visible = True
+        playListSongs.visible = True
+        librarySongs.visible = True
         addSongButton.visible = False
         playButton.visible = False
         PauseButton.visible = False
@@ -98,6 +106,7 @@ def main(page: ft.Page):
         shuffleButtonPlaylist.visible = False
         coverImagePlaylist.visible = False
         songsQuantity.visible = False
+        playlistSongsList.visible = False
         page.update()
 
     # def createPlaylistClicked(e):
@@ -185,6 +194,8 @@ def main(page: ft.Page):
     playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
     playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
     playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click= lambda _: homeScreen(),width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
+    playListSongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=290,padding=10,visible=False)
+    librarySongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=480,padding=10,visible=False)
 
     #? When editing the playlist
     playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=lambda e: playlistCoverClicked(e, page, playlistCoverButton, coverImage)) # Too add a playlist cover when creating the playlist
@@ -193,14 +204,14 @@ def main(page: ft.Page):
     playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
     playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click= lambda _: homeScreen(),width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
 
-    #? Playing the Playlist
+    #? Playing the Playlist 
     playButtonPlaylist = ft.Container(bgcolor="transparent",width=95,height=55,left=645,top=185,padding=10,visible=False) 
     shuffleButtonPlaylist = ft.Container(bgcolor="transparent",width=95,height=55,left=795,top=185,padding=10,visible=False)
     coverImagePlaylist = ft.Container(bgcolor="transparent",width=260,height=258,left=357,top=33,padding=10,visible=False)
     songsQuantity = ft.Container(content=ft.Text("Number of songs in playlist"),width=95,height=55,left=740,top=265,visible=True)
     playlistSongsList = ft.Container(bgcolor="#E9E8E7",width=579,height=390,left=355,top=314,visible=False)
 
-    designStack = ft.Stack([lobbyDesing,createPlaylistButton,editPlaylistButton,addSongButton,songButton,playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,PauseButton,slider,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,coverImagePlaylist,songsQuantity,playlistSongsList])
+    designStack = ft.Stack([lobbyDesing,createPlaylistButton,editPlaylistButton,addSongButton,songButton,playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,PauseButton,slider,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,coverImagePlaylist,songsQuantity,playlistSongsList,playListSongs,librarySongs])
     
     page.add(designStack)
     page.update()
