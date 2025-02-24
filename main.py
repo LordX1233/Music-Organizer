@@ -77,6 +77,25 @@ def main(page: ft.Page):
         songsQuantity.visible = False
         page.update()
 
+    def editPlaylistScreen():
+        lobbyDesing.src = get_asset_path("editPlaylist.png")
+        playlistCoverButton.visible = True
+        playlistNameButton.visible = True
+        playlistDescriptionButton.visible = True
+        playlistSaveButton.visible = True
+        addSongButton.visible = False
+        playButton.visible = False
+        PauseButton.visible = False
+        slider.visible = False
+        rewindButton.visible = False
+        forwardButton.visible = False
+        shuffleButton.visible = False
+        playButtonPlaylist.visible = False
+        shuffleButtonPlaylist.visible = False
+        coverImagePlaylist.visible = False
+        songsQuantity.visible = False
+        page.update()
+
     # def createPlaylistClicked(e):
     #     page.update()
         
@@ -157,6 +176,13 @@ def main(page: ft.Page):
     
 
     #? When creating the playlist
+    playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=lambda e: playlistCoverClicked(e, page, playlistCoverButton, coverImage)) # Too add a playlist cover when creating the playlist
+    coverImage = ft.Image(src="", width=240,height=240,left=366,top=25, visible=False, fit=ft.ImageFit.COVER) #to add a image
+    playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
+    playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
+    playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click= lambda _: homeScreen(),width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
+
+    #? When editing the playlist
     playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=lambda e: playlistCoverClicked(e, page, playlistCoverButton, coverImage)) # Too add a playlist cover when creating the playlist
     coverImage = ft.Image(src="", width=240,height=240,left=366,top=25, visible=False, fit=ft.ImageFit.COVER) #to add a image
     playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
