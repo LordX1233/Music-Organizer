@@ -25,6 +25,7 @@ def main(page: ft.Page):
         playlistNameButton.visible = False
         playlistDescriptionButton.visible = False
         playlistSaveButton.visible = False
+        playlistSongsList.visible = False
         addSongButton.visible = True
         playButton.visible = True
         slider.visible = True
@@ -44,6 +45,7 @@ def main(page: ft.Page):
         shuffleButtonPlaylist.visible = True
         coverImagePlaylist.visible = True
         songsQuantity.visible = True
+        playlistSongsList.visible = True
         playlistCoverButton.visible = False
         playlistNameButton.visible = False
         playlistDescriptionButton.visible = False
@@ -56,6 +58,7 @@ def main(page: ft.Page):
         forwardButton.visible = False
         shuffleButton.visible = False
         coverImage.visible = False
+        
         page.update()
 
     def createPlaylistScreen():
@@ -75,6 +78,7 @@ def main(page: ft.Page):
         shuffleButtonPlaylist.visible = False
         coverImagePlaylist.visible = False
         songsQuantity.visible = False
+        playlistSongsList.visible = False
         page.update()
 
     # def createPlaylistClicked(e):
@@ -168,8 +172,9 @@ def main(page: ft.Page):
     shuffleButtonPlaylist = ft.Container(bgcolor="transparent",width=95,height=55,left=795,top=185,padding=10,visible=False)
     coverImagePlaylist = ft.Container(bgcolor="transparent",width=260,height=258,left=357,top=33,padding=10,visible=False)
     songsQuantity = ft.Container(content=ft.Text("Number of songs in playlist"),width=95,height=55,left=740,top=265,visible=True)
+    playlistSongsList = ft.Container(bgcolor="#E9E8E7",width=579,height=390,left=355,top=314,visible=False)
 
-    designStack = ft.Stack([lobbyDesing,createPlaylistButton,editPlaylistButton,addSongButton,songButton,playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,PauseButton,slider,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,coverImagePlaylist,songsQuantity])
+    designStack = ft.Stack([lobbyDesing,createPlaylistButton,editPlaylistButton,addSongButton,songButton,playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,PauseButton,slider,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,coverImagePlaylist,songsQuantity,playlistSongsList])
     
     page.add(designStack)
     page.update()
