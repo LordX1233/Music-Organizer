@@ -96,8 +96,8 @@ def main(page: ft.Page):
         songsQuantity.visible = False
         page.update()
 
-    def createPlaylistClicked(e):
-        page.update()
+    # def createPlaylistClicked(e):
+    #     page.update()
         
 
     def editPlaylistClicked(e):
@@ -171,7 +171,7 @@ def main(page: ft.Page):
     #? sideBarButtons
     homeButton = ft.Container(bgcolor="transparent",width=40,height=40,left=13,top=16,padding=10,on_click= lambda _: homeScreen()) # The Home Icon on the sideBar
     createPlaylistButton = ft.Container(bgcolor="transparent",width=150,height=20,left=20,top=140,padding=10,on_click= lambda _: createPlaylistScreen()) # The button to create the playlist on the home screen
-    editPlaylistButton = ft.Container(bgcolor="transparent",width=100,height=20,left=25,top=180,padding=10,on_click=editPlaylistClicked) # The button to edit the playlist on the home screen
+    editPlaylistButton = ft.Container(bgcolor="transparent",width=100,height=20,left=25,top=180,padding=10,on_click= lambda _: editPlaylistScreen()) # The button to edit the playlist on the home screen
     songButton = ft.Container(bgcolor="transparent",width=50,height=20,left=25,top=275,padding=10,on_click= lambda _: playlistScreen()) # The songs text in the library
     
 
