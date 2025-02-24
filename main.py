@@ -96,8 +96,8 @@ def main(page: ft.Page):
         songsQuantity.visible = False
         page.update()
 
-    # def createPlaylistClicked(e):
-    #     page.update()
+    def createPlaylistClicked(e):
+        page.update()
         
 
     def editPlaylistClicked(e):
