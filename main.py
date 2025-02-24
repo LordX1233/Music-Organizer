@@ -161,7 +161,7 @@ def main(page: ft.Page):
     coverImage = ft.Image(src="", width=240,height=240,left=366,top=25, visible=False, fit=ft.ImageFit.COVER) #to add a image
     playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
     playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
-    playlistSaveButton = ft.Container(content=ft.Button(text="Save Button",color="white",on_click= lambda _: homeScreen(),width=400),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
+    playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click= lambda _: homeScreen(),width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
 
     #? Playing the Playlist
     playButtonPlaylist = ft.Container(bgcolor="transparent",width=95,height=55,left=645,top=185,padding=10,visible=False) 
