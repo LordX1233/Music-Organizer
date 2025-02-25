@@ -28,32 +28,21 @@ def main(page: ft.Page):
     def playsong(e, song):
         nonlocal playing
         audio_player.src = get_asset_path(song, subfolder="songs")
-        playButton.content.icon = ft.icons.PLAY_ARROW
+        playButton.content.icon = ft.icons.PAUSE_SHARP
         playing = True
         audio_player.play()
         page.update()
-
+    
+    def delete_song():
+        pass
+        
     songs_table = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("Song name", style=ft.TextStyle(color=ft.colors.WHITE), width=490)),
             ft.DataColumn(ft.Text("Delete", style=ft.TextStyle(color=ft.colors.WHITE))),
         ],
-        left=300,
-        top=275,
         heading_row_color="black",
-        visible=False
-    )
-
-    songs_table2 = ft.DataTable(
-        columns=[
-            ft.DataColumn(ft.Text("Song name", style=ft.TextStyle(color=ft.colors.WHITE), width=490)),
-            ft.DataColumn(ft.Text("Delete", style=ft.TextStyle(color=ft.colors.WHITE))),
-        ],
-        left=300,
-        top=275,
-        heading_row_color="black",
-        visible=False
-    )
+    ) 
 
     def songs_table_load():
         songs_table.rows.clear()
@@ -62,12 +51,23 @@ def main(page: ft.Page):
                 file_name, _ = os.path.splitext(file) 
                 songs_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.colors.BLUE)), on_tap=lambda e, f=file: playsong(e, f)), 
-                        ft.DataCell(ft.Text("Delete", style=ft.TextStyle(color=ft.colors.BLUE))),
+                        ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
+                        ft.DataCell(ft.Icon(ft.icons.DELETE, color=ft.colors.RED)),
                     ])
                 )
         page.update()
     
+
+    songs_scrollable_table = ft.ListView(
+        controls=[songs_table],
+        height=445,
+        width=637,
+        left=300,
+        top=278.5,
+        expand=True,
+        visible=False
+    )
+
     songs_table_load()
 
 
@@ -75,7 +75,7 @@ def main(page: ft.Page):
         pass
 
     def make_everything_invisible():
-        coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = songsQuantity.visible = playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionButton.visible = playlistSaveButton.visible = False
+        coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = songsQuantity.visible = playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionButton.visible = playlistSaveButton.visible = False
         page.update()
     
     def homeScreen(e):
@@ -118,7 +118,7 @@ def main(page: ft.Page):
     def songsClicked(e):
         lobbyDesign.src=get_asset_path("songsScreen.png")
         make_everything_invisible()
-        songs_table.visible = True
+        songs_scrollable_table.visible = True
         songs_table_load()
         page.update()
 
@@ -146,11 +146,11 @@ def main(page: ft.Page):
     def musicPlay(e):
         nonlocal playing
         if playing:
-            playButton.content.icon = ft.icons.PAUSE_SHARP
+            playButton.content.icon = ft.icons.PLAY_ARROW
             playing = False
             audio_player.pause()
         else:
-            playButton.content.icon = ft.icons.PLAY_ARROW
+            playButton.content.icon = ft.icons.PAUSE_SHARP
             playing = True
             audio_player.resume()
         page.update()
@@ -204,7 +204,7 @@ def main(page: ft.Page):
     designStack = ft.Stack([lobbyDesign,createPlaylistButton,editPlaylistButton,addplaylistButton,songButton,
     playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,
     slider,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,
-    coverImagePlaylist,songsQuantity, songs_table,playlistSongsList,playListSongs,librarySongs, songs_table2])
+    coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs])
     
     page.add(designStack, audio_player)
     page.update()
