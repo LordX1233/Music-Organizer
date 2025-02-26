@@ -5,6 +5,8 @@ import os
 
 import sys
 
+playlists = []
+selected_image_path = None  
 def get_asset_path(filename, subfolder="assets"):
     if getattr(sys, 'frozen', False):
         base_path = os.path.join(sys._MEIPASS, subfolder)
@@ -107,6 +109,21 @@ def main(page: ft.Page):
         make_everything_invisible()
         addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = True
         page.update()
+        playlist_display.controls.clear()
+        for playlist in playlists:
+            playlist_display.controls.append(
+            ft.Container(
+                content=ft.Column([
+                    ft.Image(src=playlist["cover"], width=100, height=100),
+                    ft.Text(playlist["name"], color="white"),
+                    ft.Text(playlist["description"], color="gray"),
+                ], spacing=5),
+                bgcolor="#333333",
+                padding=10,
+                border_radius=10
+            )
+        )
+        page.update()
 
     def playlistScreen(e):
         lobbyDesign.src=get_asset_path("playlistScreen.png")
@@ -129,20 +146,23 @@ def main(page: ft.Page):
         add_songs_table_load()
         page.update()
 
-    # def createPlaylistClicked(e):
-    #     page.update()
-    def savePlaylist():
-        name = playlistNameButton.content.value
-        description = playlistDescriptionButton.content.value
-        image_path = coverImage.src if coverImage.visible else ""
+        #! para guardar el paylist
+    def savePlaylist(e):
+        print("Entered save")
+        global selected_image_path 
+        playlist_name = playlistNameButton.content.value
+        playlist_desc = playlistDescriptionButton.content.value
 
-        conn = sqlite3.connect("musicPlayer.db")
-        cursor = conn.cursor()
+        if playlist_name and playlist_desc and selected_image_path:
+            playlists.append({
+                "name": playlist_name,
+                "description": playlist_desc,
+                "cover": selected_image_path
+            })
+        print(playlist_name +  playlist_desc + selected_image_path)
+        print("rsgsgdgdgfshidufbsdfbsiudfbs")
+        homeScreen()
 
-        cursor.execute("INSERT INTO playlists (name, description, image_path) VALUES (?, ?, ?)", 
-                (name, description, image_path))
-        conn.commit()
-        conn.close()
 
         
 
@@ -163,19 +183,20 @@ def main(page: ft.Page):
 
     def playlistCoverClicked(e, page, playlistCoverButton, coverImage):
         print("choose the album cover")
-        
+
         def fileSelected(e: ft.FilePickerResultEvent):
+            global selected_image_path  
             if e.files:
                 file = e.files[0]
+                selected_image_path = file.path  
                 playlistCoverButton.visible = False
-                coverImage.src = file.path
+                coverImage.src = selected_image_path
                 coverImage.visible = True
             page.update()
 
         filePicker = ft.FilePicker(on_result=fileSelected)
         page.overlay.append(filePicker)
-        page.update() 
-
+        page.update()
         filePicker.pick_files(allow_multiple=False, allowed_extensions=["jpg", "png", "jpeg"])
 
     def musicPlay(e):
@@ -225,10 +246,24 @@ def main(page: ft.Page):
     coverImage = ft.Image(src="", width=240,height=240,left=366,top=25, visible=False, fit=ft.ImageFit.COVER) #to add a image
     playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
     playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
-    playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=homeScreen,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
+    playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=savePlaylist,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
     
     playListSongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=290,padding=10,visible=False)
     # librarySongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=480,padding=10,visible=False)
+
+
+    playlist_display = ft.Column([], spacing=10)
+
+    homeContainer = ft.Container(
+        content=ft.Column([
+            ft.Text("Your Playlists", color="white"),
+            playlist_display
+        ], spacing=10),
+        bgcolor="transparent",
+        left=550,
+        top=250
+    )
+
 
     librarySongs = ft.ListView(
         controls=[add_songs_table],
@@ -250,7 +285,7 @@ def main(page: ft.Page):
     designStack = ft.Stack([lobbyDesign,createPlaylistButton,editPlaylistButton,addplaylistButton,songButton,
     playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,
     slider,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,
-    coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs,audio_player])
+    coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs,audio_player, homeContainer])
     
     page.add(designStack)
     page.update()
