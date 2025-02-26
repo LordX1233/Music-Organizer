@@ -13,17 +13,15 @@ def get_asset_path(filename, subfolder="assets"):
 
 
 def main(page: ft.Page):
-    # audio_player = None  # To store the audio control
     page.theme_mode = ft.ThemeMode.DARK
     page.title = 'Music Organizer'
     page.window.width = 1024
     page.window.height = 768
-    # page.scroll = True
     page.window.resizable = False
 
     playing = False
 
-    audio_player = ft.Audio(autoplay=True)
+    audio_player = ft.Audio(src=" ", autoplay=True)
 
     def playsong(e, song):
         nonlocal playing
@@ -33,7 +31,10 @@ def main(page: ft.Page):
         audio_player.play()
         page.update()
     
-    def delete_song():
+    def delete_song(e, song):
+        print(song)
+        os.remove(get_asset_path(song, subfolder="songs"))
+        songs_table_load()
         pass
         
     songs_table = ft.DataTable(
@@ -44,6 +45,27 @@ def main(page: ft.Page):
         heading_row_color="black",
     ) 
 
+    add_songs_table = ft.DataTable(
+        columns=[
+            ft.DataColumn(label=ft.Text("",width=380)),
+            ft.DataColumn(label=ft.Text("")),
+        ],
+        heading_row_height=0
+    ) 
+
+    def add_songs_table_load():
+        add_songs_table.rows.clear()
+        for root, dirs, files in os.walk("Songs"):
+            for file in files:
+                file_name, _ = os.path.splitext(file) 
+                add_songs_table.rows.append(
+                    ft.DataRow(cells=[
+                        ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
+                        ft.DataCell(ft.Icon(ft.icons.ADD_CIRCLE, color=ft.colors.GREEN)),
+                    ])
+                )
+        page.update()
+
     def songs_table_load():
         songs_table.rows.clear()
         for root, dirs, files in os.walk("Songs"):
@@ -52,7 +74,7 @@ def main(page: ft.Page):
                 songs_table.rows.append(
                     ft.DataRow(cells=[
                         ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
-                        ft.DataCell(ft.Icon(ft.icons.DELETE, color=ft.colors.RED)),
+                        ft.DataCell(ft.Icon(ft.icons.DELETE, color=ft.colors.RED), on_tap=lambda e, f=file: delete_song(e, f)),
                     ])
                 )
         page.update()
@@ -69,6 +91,7 @@ def main(page: ft.Page):
     )
 
     songs_table_load()
+    add_songs_table_load()
 
 
     def fetch_list_of_songs():
@@ -95,12 +118,14 @@ def main(page: ft.Page):
         lobbyDesign.src=get_asset_path("createPlaylist.png")
         make_everything_invisible()
         playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionButton.visible = playlistSaveButton.visible = playListSongs.visible = librarySongs.visible = True
+        add_songs_table_load()
         page.update()
 
-    def editPlaylistScreen():
+    def editPlaylistScreen(e):
         lobbyDesign.src = get_asset_path("editPlaylist.png")
         make_everything_invisible()
         playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionButton.visible = playlistSaveButton.visible = playListSongs.visible = librarySongs.visible = True
+        add_songs_table_load()
         page.update()
 
     # def createPlaylistClicked(e):
@@ -139,10 +164,6 @@ def main(page: ft.Page):
 
         filePicker.pick_files(allow_multiple=False, allowed_extensions=["jpg", "png", "jpeg"])
 
-    # def saveClicked(e):
-    #     homeScreen()  
-    #     page.update()
-    
     def musicPlay(e):
         nonlocal playing
         if playing:
@@ -181,7 +202,7 @@ def main(page: ft.Page):
     #? sideBarButtons
     homeButton = ft.Container(bgcolor="transparent",width=40,height=40,left=13,top=16,padding=10,on_click=homeScreen) # The Home Icon on the sideBar
     createPlaylistButton = ft.Container(bgcolor="transparent",width=150,height=20,left=20,top=140,padding=10,on_click=createPlaylistScreen) # The button to create the playlist on the home screen
-    editPlaylistButton = ft.Container(bgcolor="transparent",width=100,height=20,left=25,top=180,padding=10,on_click=editPlaylistClicked) # The button to edit the playlist on the home screen
+    editPlaylistButton = ft.Container(bgcolor="transparent",width=100,height=20,left=25,top=180,padding=10,on_click=editPlaylistScreen) # The button to edit the playlist on the home screen
     songButton = ft.Container(bgcolor="transparent",width=50,height=20,left=25,top=275,padding=10,on_click=songsClicked) # The songs text in the library
     
 
@@ -191,8 +212,19 @@ def main(page: ft.Page):
     playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
     playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
     playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=homeScreen,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
+    
     playListSongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=290,padding=10,visible=False)
-    librarySongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=480,padding=10,visible=False)
+    # librarySongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=480,padding=10,visible=False)
+
+    librarySongs = ft.ListView(
+        controls=[add_songs_table],
+        height=190,
+        width=568,
+        left=360,
+        top=520,
+        expand=True,
+        visible=False
+    )
 
     #? Playing the Playlist 
     playButtonPlaylist = ft.Container(bgcolor="transparent",width=95,height=55,left=645,top=185,padding=10,visible=False) 
@@ -204,17 +236,10 @@ def main(page: ft.Page):
     designStack = ft.Stack([lobbyDesign,createPlaylistButton,editPlaylistButton,addplaylistButton,songButton,
     playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,
     slider,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,
-    coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs])
+    coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs,audio_player])
     
-    page.add(designStack, audio_player)
+    page.add(designStack)
     page.update()
-
-
-
-
-
-
-
 
 
 
