@@ -1,3 +1,4 @@
+import sqlite3
 import flet as ft
 import base64
 import os
@@ -130,6 +131,19 @@ def main(page: ft.Page):
 
     # def createPlaylistClicked(e):
     #     page.update()
+    def savePlaylist():
+        name = playlistNameButton.content.value
+        description = playlistDescriptionButton.content.value
+        image_path = coverImage.src if coverImage.visible else ""
+
+        conn = sqlite3.connect("musicPlayer.db")
+        cursor = conn.cursor()
+
+        cursor.execute("INSERT INTO playlists (name, description, image_path) VALUES (?, ?, ?)", 
+                (name, description, image_path))
+        conn.commit()
+        conn.close()
+
         
 
     def editPlaylistClicked(e):
