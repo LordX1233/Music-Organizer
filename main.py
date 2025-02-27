@@ -6,8 +6,7 @@ import os
 import sys
 
 playlists = []
-selected_image_path = None 
-
+selected_image_path = None  
 def get_asset_path(filename, subfolder="assets"):
     if getattr(sys, 'frozen', False):
         base_path = os.path.join(sys._MEIPASS, subfolder)
@@ -182,19 +181,20 @@ def main(page: ft.Page):
 
     def playlistCoverClicked(e, page, playlistCoverButton, coverImage):
         print("choose the album cover")
-        
+
         def fileSelected(e: ft.FilePickerResultEvent):
+            global selected_image_path  
             if e.files:
                 file = e.files[0]
+                selected_image_path = file.path  
                 playlistCoverButton.visible = False
-                coverImage.src = file.path
+                coverImage.src = selected_image_path
                 coverImage.visible = True
             page.update()
 
         filePicker = ft.FilePicker(on_result=fileSelected)
         page.overlay.append(filePicker)
-        page.update() 
-
+        page.update()
         filePicker.pick_files(allow_multiple=False, allowed_extensions=["jpg", "png", "jpeg"])
 
     def musicPlay(e):
@@ -245,6 +245,7 @@ def main(page: ft.Page):
     playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
     playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
     playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=savePlaylist,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=30,padding=10,visible=False) # temporary save button
+    
     playListSongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=290,padding=10,visible=False)
     # librarySongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=480,padding=10,visible=False)
 
@@ -268,6 +269,9 @@ def main(page: ft.Page):
         visible=True
     )
 
+
+
+
     librarySongs = ft.ListView(
         controls=[add_songs_table],
         height=190,
@@ -288,7 +292,7 @@ def main(page: ft.Page):
     designStack = ft.Stack([lobbyDesign,createPlaylistButton,editPlaylistButton,addplaylistButton,songButton,
     playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,
     slider,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,
-    coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs,audio_player])
+    coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs,audio_player, homeContainer])
     
     page.add(designStack)
     page.update()
