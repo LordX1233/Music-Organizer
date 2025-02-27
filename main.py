@@ -27,13 +27,18 @@ def main(page: ft.Page):
     playing = False
 
     audio_player = ft.Audio(src=" ", autoplay=True)
+    library_list = []
+    current_song_index = 0
+    rewind_state = False
 
     def playsong(e, song):
-        nonlocal playing
+        nonlocal playing, current_song_index
         audio_player.src = get_asset_path(song, subfolder="Songs")
         playButton.content.icon = ft.icons.PAUSE_SHARP
         playing = True
         audio_player.play()
+        current_song_index = library_list.index(song)
+        audio_player.on_ended = lambda e: forward(e)
         page.update()
     
     def delete_song(e, song):
@@ -88,16 +93,17 @@ def main(page: ft.Page):
         page.update()
     
     playlist_songs_table = ft.DataTable(
-    columns=[
-        ft.DataColumn(ft.Text("Song name", style=ft.TextStyle(color=ft.colors.WHITE), width=440)),
-        ft.DataColumn(ft.Text("Delete", style=ft.TextStyle(color=ft.colors.WHITE))),
-    ],
-    heading_row_color="black",
-)
+        columns=[
+            ft.DataColumn(ft.Text("Song name", style=ft.TextStyle(color=ft.colors.WHITE), width=440)),
+            ft.DataColumn(ft.Text("Delete", style=ft.TextStyle(color=ft.colors.WHITE))),
+        ],
+        heading_row_color="black",
+    )
 
-
+            
     def songs_table_load():
         songs_table.rows.clear()
+        library_list.clear()
         for root, dirs, files in os.walk("Songs"):
             for file in files:
                 file_name, _ = os.path.splitext(file) 
@@ -107,6 +113,7 @@ def main(page: ft.Page):
                         ft.DataCell(ft.Icon(ft.icons.DELETE, color=ft.colors.RED), on_tap=lambda e, f=file: delete_song(e, f)),
                     ])
                 )
+                library_list.append(file)
         page.update()
     
 
@@ -244,6 +251,7 @@ def main(page: ft.Page):
             page.update()
 
     def check_add_change(e):
+        print(library_list)
         if songNameField.content.value != "" and (youtubeLinkField.content.value != "" or currentmusicfile != ""):
             addsongButton.visible = True
         else:
@@ -288,12 +296,21 @@ def main(page: ft.Page):
         pass
 
     def rewind(e):
-        page.update()
-        pass
-
+        nonlocal current_song_index, rewind_state
+        if rewind_state:
+            if current_song_index - 1 != -1:
+                current_song_index -= 1
+                playsong(None, library_list[current_song_index])
+                rewind_state = False
+        else:
+            rewind_state = True
+            playsong(None, library_list[current_song_index])
+        
     def forward(e):
-        page.update()
-        pass
+        nonlocal current_song_index
+        if current_song_index + 1 < len(library_list):
+            current_song_index += 1
+            playsong(None, library_list[current_song_index])
         
     #? On the Home Screen
     lobbyDesign = ft.Image(src=get_asset_path("music player.png"))
@@ -385,8 +402,6 @@ def main(page: ft.Page):
     page.update()
 
 
-
-    
     #? file_picker = ft.FilePicker(on_result=on_file_selected)
     #? page.overlay.append(file_picker)
 
