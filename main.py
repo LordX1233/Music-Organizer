@@ -99,14 +99,33 @@ def main(page: ft.Page):
         pass
 
     def make_everything_invisible():
-        coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = songsQuantity.visible = playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionButton.visible = playlistSaveButton.visible = False
+        coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = songsQuantity.visible = playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionButton.visible = playlistSaveButton.visible = homeContainer.visible = False
         page.update()
     
-    def homeScreen(e):
+    def homeScreen(e=None):
         lobbyDesign.src=get_asset_path("music player.png")
         make_everything_invisible()
-        addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = True
+        addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible= homeContainer.visible = True
         page.update()
+<<<<<<< Updated upstream
+=======
+        playlist_display.controls.clear()
+        page.update()
+        for playlist in playlists:
+            playlist_display.controls.append(
+            ft.Container(
+                content=ft.Column([
+                    ft.Image(src=playlist["cover"], width=100, height=100),
+                    ft.Text(playlist["name"], color="white"),
+                    ft.Text(playlist["description"], color="gray"),
+                ], spacing=5),
+                bgcolor="#333333",
+                padding=10,
+                border_radius=10
+            )
+        )
+        page.update()
+>>>>>>> Stashed changes
 
     def playlistScreen(e):
         lobbyDesign.src=get_asset_path("playlistScreen.png")
@@ -129,6 +148,7 @@ def main(page: ft.Page):
         add_songs_table_load()
         page.update()
 
+<<<<<<< Updated upstream
     # def createPlaylistClicked(e):
     #     page.update()
     def savePlaylist():
@@ -143,6 +163,22 @@ def main(page: ft.Page):
                 (name, description, image_path))
         conn.commit()
         conn.close()
+=======
+        #! para guardar el paylist
+    def savePlaylist(e):
+        global selected_image_path
+        print(f"Name: {playlistNameButton.content.value}")
+        print(f"Description: {playlistDescriptionButton.content.value}")
+        print(f"Image Path: {selected_image_path}")
+
+        if playlistNameButton.content.value and playlistDescriptionButton.content.value and selected_image_path:
+            playlists.append({
+                "name": playlistNameButton.content.value,
+                "description": playlistDescriptionButton.content.value,
+                "cover": selected_image_path
+            })
+            homeScreen(None)
+>>>>>>> Stashed changes
 
         
 
@@ -225,11 +261,38 @@ def main(page: ft.Page):
     coverImage = ft.Image(src="", width=240,height=240,left=366,top=25, visible=False, fit=ft.ImageFit.COVER) #to add a image
     playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
     playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
+<<<<<<< Updated upstream
     playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=homeScreen,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
+=======
+    playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=savePlaylist,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=30,padding=10,visible=False) # temporary save button
+>>>>>>> Stashed changes
     
     playListSongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=290,padding=10,visible=False)
     # librarySongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=480,padding=10,visible=False)
 
+<<<<<<< Updated upstream
+=======
+
+    playlist_display = ft.Row(spacing=10, wrap=True) 
+
+    homeContainer = ft.Container(
+        content=ft.Column([
+            ft.Container(
+                content=playlist_display,
+                expand=True,
+            )
+        ], spacing=10, scroll="auto"), 
+        bgcolor="transparent",
+        left=450,
+        top=150,
+        width=600,
+        height=400,
+        padding=20,
+        border_radius=10,
+        visible=True
+    )
+
+>>>>>>> Stashed changes
     librarySongs = ft.ListView(
         controls=[add_songs_table],
         height=190,
@@ -254,7 +317,6 @@ def main(page: ft.Page):
     
     page.add(designStack)
     page.update()
-
 
 
 
