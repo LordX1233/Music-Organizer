@@ -64,10 +64,35 @@ def main(page: ft.Page):
                 add_songs_table.rows.append(
                     ft.DataRow(cells=[
                         ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
-                        ft.DataCell(ft.Icon(ft.icons.ADD_CIRCLE, color=ft.colors.GREEN)),
+                        ft.DataCell(ft.IconButton(ft.icons.ADD_CIRCLE, icon_color=ft.colors.GREEN, on_click=add_song_to_playlist)),
                     ])
                 )
         page.update()
+    
+    def add_song_to_playlist(e, song):
+        playlist_songs_table.rows.append(
+            ft.DataRow(cells=[
+                ft.DataCell(ft.Text(song, style=ft.TextStyle(color=ft.colors.BLACK))),
+                ft.DataCell(ft.Icon(ft.icons.DELETE, color=ft.colors.RED, on_click=lambda e, f=song: remove_song_from_playlist(e, f))),
+            ])
+        )
+        page.update()
+    
+    def remove_song_from_playlist(e, song):
+        for row in playlist_songs_table.rows:
+            if row.cells[0].content == song:
+                playlist_songs_table.rows.remove(row)
+                break
+        page.update()
+    
+    playlist_songs_table = ft.DataTable(
+    columns=[
+        ft.DataColumn(ft.Text("Song name", style=ft.TextStyle(color=ft.colors.WHITE), width=440)),
+        ft.DataColumn(ft.Text("Delete", style=ft.TextStyle(color=ft.colors.WHITE))),
+    ],
+    heading_row_color="black",
+)
+
 
     def songs_table_load():
         songs_table.rows.clear()
@@ -244,9 +269,16 @@ def main(page: ft.Page):
     coverImage = ft.Image(src="", width=240,height=240,left=366,top=25, visible=False, fit=ft.ImageFit.COVER) #to add a image
     playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
     playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
-    playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=savePlaylist,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=30,padding=10,visible=False) # temporary save button
+    playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=savePlaylist,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=30,padding=5,visible=False) # temporary save button
     
-    playListSongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=290,padding=10,visible=False)
+    playListSongs = ft.Container(
+    content=ft.Column([playlist_songs_table], spacing=10),
+    bgcolor="#E9E8E7",
+    width=590,
+    height=200,
+    left=340,top=290,padding=10,visible=False
+)
+
     # librarySongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=480,padding=10,visible=False)
 
 
