@@ -2,12 +2,14 @@ import sqlite3
 import flet as ft
 import base64
 import os
+from pytubefix import YouTube
+import shutil
 
 import sys
 
 playlists = []
 selected_image_path = None  
-def get_asset_path(filename, subfolder="assets"):
+def get_asset_path(filename, subfolder="Assets"):
     if getattr(sys, 'frozen', False):
         base_path = os.path.join(sys._MEIPASS, subfolder)
     else:
@@ -28,7 +30,7 @@ def main(page: ft.Page):
 
     def playsong(e, song):
         nonlocal playing
-        audio_player.src = get_asset_path(song, subfolder="songs")
+        audio_player.src = get_asset_path(song, subfolder="Songs")
         playButton.content.icon = ft.icons.PAUSE_SHARP
         playing = True
         audio_player.play()
@@ -36,7 +38,7 @@ def main(page: ft.Page):
     
     def delete_song(e, song):
         print(song)
-        os.remove(get_asset_path(song, subfolder="songs"))
+        os.remove(get_asset_path(song, subfolder="Songs"))
         songs_table_load()
         pass
         
@@ -126,7 +128,7 @@ def main(page: ft.Page):
         pass
 
     def make_everything_invisible():
-        coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = songsQuantity.visible = playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionButton.visible = playlistSaveButton.visible = homeContainer.visible = False
+        filenamedisplay.visible = addsongfile.visible = addsongButton.visible = youtubeLinkField.visible = songNameField.visible = coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = songsQuantity.visible = playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionField.visible = playlistSaveButton.visible = homeContainer.visible = False
         page.update()
     
     def homeScreen(e=None):
@@ -161,14 +163,14 @@ def main(page: ft.Page):
     def createPlaylistScreen(e):
         lobbyDesign.src=get_asset_path("createPlaylist.png")
         make_everything_invisible()
-        playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionButton.visible = playlistSaveButton.visible = playListSongs.visible = librarySongs.visible = True
+        playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionField.visible = playlistSaveButton.visible = playListSongs.visible = librarySongs.visible = True
         add_songs_table_load()
         page.update()
 
     def editPlaylistScreen(e):
         lobbyDesign.src = get_asset_path("editPlaylist.png")
         make_everything_invisible()
-        playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionButton.visible = playlistSaveButton.visible = playListSongs.visible = librarySongs.visible = True
+        playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionField.visible = playlistSaveButton.visible = playListSongs.visible = librarySongs.visible = True
         add_songs_table_load()
         page.update()
 
@@ -176,13 +178,13 @@ def main(page: ft.Page):
     def savePlaylist(e):
         global selected_image_path
         print(f"Name: {playlistNameButton.content.value}")
-        print(f"Description: {playlistDescriptionButton.content.value}")
+        print(f"Description: {playlistDescriptionField.content.value}")
         print(f"Image Path: {selected_image_path}")
 
-        if playlistNameButton.content.value and playlistDescriptionButton.content.value and selected_image_path:
+        if playlistNameButton.content.value and playlistDescriptionField.content.value and selected_image_path:
             playlists.append({
                 "name": playlistNameButton.content.value,
-                "description": playlistDescriptionButton.content.value,
+                "description": playlistDescriptionField.content.value,
                 "cover": selected_image_path
             })
             homeScreen(None)
@@ -193,16 +195,62 @@ def main(page: ft.Page):
         print("edit playlistClicked")
         pass
 
-    def addSongClicked(e):
-        print("Songs clicked")
-        pass
-
-    def songsClicked(e):
+    def addSongClicked(e, currentmusicfile):
+        if youtubeLinkField.content.value == "":
+            file_path = currentmusicfile
+            print(currentmusicfile)
+            file_extension = os.path.splitext(file_path)[1]
+            new_file_name = f"{ songNameField.content.value}{file_extension}"  # Rename using song_name
+            destination = os.path.join("Songs", new_file_name)  # Define new path
+            shutil.copy(file_path, destination)
+        else:
+            yt = YouTube(youtubeLinkField.content.value)
+            audio_stream = yt.streams.filter(only_audio=True).first()
+            os.makedirs("Songs", exist_ok=True)
+            audio_file = audio_stream.download(output_path="Songs")
+            mp3_file = os.path.join("Songs", songNameField.content.value + ".mp3")
+            os.rename(audio_file, mp3_file)
+        songs_table_load()
+        page.update
+    
+    def songsScreen(e):
         lobbyDesign.src=get_asset_path("songsScreen.png")
         make_everything_invisible()
-        songs_scrollable_table.visible = True
+        filenamedisplay.visible = addsongfile.visible = songs_scrollable_table.visible = songNameField.visible = youtubeLinkField.visible = True
         songs_table_load()
         page.update()
+    
+    def addSongFileClicked(e, page): 
+        nonlocal currentmusicfile 
+        if filenamedisplay.content.value == "":      
+            def fileSelected(e: ft.FilePickerResultEvent):
+                nonlocal currentmusicfile 
+                if e.files:
+                    file = e.files[0]
+                    filenamedisplay.content.value = file.name
+                    currentmusicfile = file.path
+                page.update()
+
+            filePicker = ft.FilePicker(on_result=fileSelected)
+            page.overlay.append(filePicker)
+            page.update() 
+            filePicker.pick_files(allow_multiple=False, allowed_extensions=["mp3", "wav"])
+            youtubeLinkField.content.disabled = True
+            youtubeLinkField.content.value = ""
+        else:
+            filenamedisplay.content.value = ""
+            currentmusicfile = ""
+            youtubeLinkField.content.disabled = False
+            page.update()
+
+    def check_add_change(e):
+        if songNameField.content.value != "" and (youtubeLinkField.content.value != "" or currentmusicfile != ""):
+            addsongButton.visible = True
+        else:
+            addsongButton.visible = False
+        page.update()
+
+
 
     def playlistCoverClicked(e, page, playlistCoverButton, coverImage):
         print("choose the album cover")
@@ -261,14 +309,14 @@ def main(page: ft.Page):
     homeButton = ft.Container(bgcolor="transparent",width=40,height=40,left=13,top=16,padding=10,on_click=homeScreen) # The Home Icon on the sideBar
     createPlaylistButton = ft.Container(bgcolor="transparent",width=150,height=20,left=20,top=140,padding=10,on_click=createPlaylistScreen) # The button to create the playlist on the home screen
     editPlaylistButton = ft.Container(bgcolor="transparent",width=100,height=20,left=25,top=180,padding=10,on_click=editPlaylistScreen) # The button to edit the playlist on the home screen
-    songButton = ft.Container(bgcolor="transparent",width=50,height=20,left=25,top=275,padding=10,on_click=songsClicked) # The songs text in the library
+    songButton = ft.Container(bgcolor="transparent",width=50,height=20,left=25,top=275,padding=10,on_click=songsScreen) # The songs text in the library
     
 
     #? When creating the playlist
     playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=lambda e: playlistCoverClicked(e, page, playlistCoverButton, coverImage)) # Too add a playlist cover when creating the playlist
     coverImage = ft.Image(src="", width=240,height=240,left=366,top=25, visible=False, fit=ft.ImageFit.COVER) #to add a image
     playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
-    playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
+    playlistDescriptionField = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
     playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=savePlaylist,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=30,padding=5,visible=False) # temporary save button
     
     playListSongs = ft.Container(
@@ -301,9 +349,6 @@ def main(page: ft.Page):
         visible=True
     )
 
-
-
-
     librarySongs = ft.ListView(
         controls=[add_songs_table],
         height=190,
@@ -321,10 +366,20 @@ def main(page: ft.Page):
     songsQuantity = ft.Container(content=ft.Text("Number of songs in playlist"),width=95,height=55,left=740,top=265,visible=True)
     playlistSongsList = ft.Container(bgcolor="#E9E8E7",width=579,height=390,left=355,top=314,visible=False)
 
+
+    #? Songs stuff
+    songNameField = ft.Container(content=ft.TextField(color="black",border_color="black", hint_text="Enter Song Name:", text_size=20, width=450, cursor_color="black", bgcolor="white", on_change=check_add_change),bgcolor="transparent",left=290,top=85.5,padding=10,visible=False)
+    youtubeLinkField = ft.Container(content=ft.TextField(color="black",border_color="black", hint_text="Enter Youtube Link:", text_size=20, width=350, cursor_color="black", bgcolor="white", on_change=check_add_change),bgcolor="transparent",left=570,top=175,padding=10,visible=False)
+    currentmusicfile = ""
+    filenamedisplay = ft.Container(content=(ft.Text("", color="black")), top=245, left= 300)
+    addsongButton = ft.Container(bgcolor="transparent",width=158,height=51,left=782,top=97,padding=10,on_click= lambda e: addSongClicked(e, currentmusicfile), visible=False)
+    addsongfile = ft.Container(bgcolor="transparent",width=155,height=51,left=298,top=187,padding=10,on_click=lambda e: addSongFileClicked(e,page), visible=False, on_tap_down=check_add_change)
+
     designStack = ft.Stack([lobbyDesign,createPlaylistButton,editPlaylistButton,addplaylistButton,songButton,
-    playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionButton,playlistSaveButton,playButton,
+    playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionField,playlistSaveButton,playButton,
     slider,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,
-    coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs,audio_player, homeContainer])
+    coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs,audio_player,
+    songNameField, youtubeLinkField, addsongButton, addsongfile, homeContainer, filenamedisplay])
     
     page.add(designStack)
     page.update()
