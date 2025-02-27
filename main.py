@@ -5,6 +5,9 @@ import os
 
 import sys
 
+playlists = []
+selected_image_path = None 
+
 def get_asset_path(filename, subfolder="assets"):
     if getattr(sys, 'frozen', False):
         base_path = os.path.join(sys._MEIPASS, subfolder)
@@ -107,8 +110,6 @@ def main(page: ft.Page):
         make_everything_invisible()
         addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible= homeContainer.visible = True
         page.update()
-<<<<<<< Updated upstream
-=======
         playlist_display.controls.clear()
         page.update()
         for playlist in playlists:
@@ -125,7 +126,6 @@ def main(page: ft.Page):
             )
         )
         page.update()
->>>>>>> Stashed changes
 
     def playlistScreen(e):
         lobbyDesign.src=get_asset_path("playlistScreen.png")
@@ -148,22 +148,6 @@ def main(page: ft.Page):
         add_songs_table_load()
         page.update()
 
-<<<<<<< Updated upstream
-    # def createPlaylistClicked(e):
-    #     page.update()
-    def savePlaylist():
-        name = playlistNameButton.content.value
-        description = playlistDescriptionButton.content.value
-        image_path = coverImage.src if coverImage.visible else ""
-
-        conn = sqlite3.connect("musicPlayer.db")
-        cursor = conn.cursor()
-
-        cursor.execute("INSERT INTO playlists (name, description, image_path) VALUES (?, ?, ?)", 
-                (name, description, image_path))
-        conn.commit()
-        conn.close()
-=======
         #! para guardar el paylist
     def savePlaylist(e):
         global selected_image_path
@@ -178,7 +162,6 @@ def main(page: ft.Page):
                 "cover": selected_image_path
             })
             homeScreen(None)
->>>>>>> Stashed changes
 
         
 
@@ -261,17 +244,10 @@ def main(page: ft.Page):
     coverImage = ft.Image(src="", width=240,height=240,left=366,top=25, visible=False, fit=ft.ImageFit.COVER) #to add a image
     playlistNameButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False) # The + Square at home-screen
     playlistDescriptionButton = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
-<<<<<<< Updated upstream
-    playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=homeScreen,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=655,padding=10,visible=False) # temporary save button
-=======
     playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=savePlaylist,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=30,padding=10,visible=False) # temporary save button
->>>>>>> Stashed changes
-    
     playListSongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=290,padding=10,visible=False)
     # librarySongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=480,padding=10,visible=False)
 
-<<<<<<< Updated upstream
-=======
 
     playlist_display = ft.Row(spacing=10, wrap=True) 
 
@@ -292,7 +268,6 @@ def main(page: ft.Page):
         visible=True
     )
 
->>>>>>> Stashed changes
     librarySongs = ft.ListView(
         controls=[add_songs_table],
         height=190,
