@@ -4,8 +4,10 @@ import base64
 import os
 from pytubefix import YouTube
 import shutil
-
 import sys
+
+
+import asyncio
 
 playlists = []
 selected_image_path = None  
@@ -29,16 +31,17 @@ def main(page: ft.Page):
     audio_player = ft.Audio(src=" ", autoplay=True)
     library_list = []
     current_song_index = 0
-    rewind_state = False
 
     def playsong(e, song):
         nonlocal playing, current_song_index
         audio_player.src = get_asset_path(song, subfolder="Songs")
-        playButton.content.icon = ft.icons.PAUSE_SHARP
+        playButton.content.icon = ft.Icons.PAUSE_SHARP
         playing = True
         audio_player.play()
         current_song_index = library_list.index(song)
+        current_song_text.content.value = os.path.splitext(song)[0]
         audio_player.on_ended = lambda e: forward(e)
+        audio_player.on_position_changed = lambda e: update_progress()
         page.update()
     
     def delete_song(e, song):
@@ -71,7 +74,7 @@ def main(page: ft.Page):
                 add_songs_table.rows.append(
                     ft.DataRow(cells=[
                         ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
-                        ft.DataCell(ft.IconButton(ft.icons.ADD_CIRCLE, icon_color=ft.colors.GREEN, on_click=add_song_to_playlist)),
+                        ft.DataCell(ft.IconButton(ft.Icons.ADD_CIRCLE, icon_color=ft.colors.GREEN, on_click=add_song_to_playlist)),
                     ])
                 )
         page.update()
@@ -80,7 +83,7 @@ def main(page: ft.Page):
         playlist_songs_table.rows.append(
             ft.DataRow(cells=[
                 ft.DataCell(ft.Text(song, style=ft.TextStyle(color=ft.colors.BLACK))),
-                ft.DataCell(ft.Icon(ft.icons.DELETE, color=ft.colors.RED, on_click=lambda e, f=song: remove_song_from_playlist(e, f))),
+                ft.DataCell(ft.Icon(ft.Icons.DELETE, color=ft.colors.RED, on_click=lambda e, f=song: remove_song_from_playlist(e, f))),
             ])
         )
         page.update()
@@ -110,7 +113,7 @@ def main(page: ft.Page):
                 songs_table.rows.append(
                     ft.DataRow(cells=[
                         ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
-                        ft.DataCell(ft.Icon(ft.icons.DELETE, color=ft.colors.RED), on_tap=lambda e, f=file: delete_song(e, f)),
+                        ft.DataCell(ft.Icon(ft.Icons.DELETE, color=ft.colors.RED), on_tap=lambda e, f=file: delete_song(e, f)),
                     ])
                 )
                 library_list.append(file)
@@ -135,13 +138,13 @@ def main(page: ft.Page):
         pass
 
     def make_everything_invisible():
-        filenamedisplay.visible = addsongfile.visible = addsongButton.visible = youtubeLinkField.visible = songNameField.visible = coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = songsQuantity.visible = playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionField.visible = playlistSaveButton.visible = homeContainer.visible = False
+        current_song_text.visible = filenamedisplay.visible = addsongfile.visible = addsongButton.visible = youtubeLinkField.visible = songNameField.visible = coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = songsQuantity.visible = playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionField.visible = playlistSaveButton.visible = homeContainer.visible = False
         page.update()
     
     def homeScreen(e=None):
         lobbyDesign.src=get_asset_path("music player.png")
         make_everything_invisible()
-        addplaylistButton.visible = playButton.visible = slider.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible= homeContainer.visible = True
+        current_song_text.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible= homeContainer.visible = True
         page.update()
         playlist_display.controls.clear()
         page.update()
@@ -278,14 +281,24 @@ def main(page: ft.Page):
         page.update()
         filePicker.pick_files(allow_multiple=False, allowed_extensions=["jpg", "png", "jpeg"])
 
+
+    def update_progress():
+        current_position = audio_player.get_current_position()
+        duration = audio_player.get_duration()
+        progress = 0
+        if current_position != None and duration != None: progress = (current_position / duration)
+        progress_bar.content.value = progress
+        page.update()
+    
+
     def musicPlay(e):
         nonlocal playing
         if playing:
-            playButton.content.icon = ft.icons.PLAY_ARROW
+            playButton.content.icon = ft.Icons.PLAY_ARROW
             playing = False
             audio_player.pause()
         else:
-            playButton.content.icon = ft.icons.PAUSE_SHARP
+            playButton.content.icon = ft.Icons.PAUSE_SHARP
             playing = True
             audio_player.resume()
         page.update()
@@ -296,30 +309,33 @@ def main(page: ft.Page):
         pass
 
     def rewind(e):
-        nonlocal current_song_index, rewind_state
-        if rewind_state:
+        nonlocal current_song_index 
+        if audio_player.get_current_position() >= audio_player.get_duration()/2:
+            playsong(None, library_list[current_song_index])
+        else:
             if current_song_index - 1 != -1:
                 current_song_index -= 1
                 playsong(None, library_list[current_song_index])
-                rewind_state = False
-        else:
-            rewind_state = True
-            playsong(None, library_list[current_song_index])
+            else:
+                playsong(None, library_list[current_song_index])
+            
         
     def forward(e):
         nonlocal current_song_index
         if current_song_index + 1 < len(library_list):
             current_song_index += 1
             playsong(None, library_list[current_song_index])
+    
         
     #? On the Home Screen
     lobbyDesign = ft.Image(src=get_asset_path("music player.png"))
     addplaylistButton = ft.Container(bgcolor="transparent",width=200,height=193,left=257,top=167,padding=10,on_click=createPlaylistScreen) # The + Square at home-screen
-    playButton = ft.Container(content=ft.IconButton(icon=ft.icons.PLAY_ARROW,on_click=musicPlay,icon_color="white"),bgcolor="transparent",left=384,top=13,padding=10,visible=True) # The play button in Home
+    playButton = ft.Container(content=ft.IconButton(icon=ft.Icons.PLAY_ARROW,on_click=musicPlay,icon_color="white"),bgcolor="transparent",left=384,top=13,padding=10,visible=True) # The play button in Home
     shuffleButton = ft.Container(bgcolor="transparent",width=43,height=40,left=265,top=25,padding=10,on_click=shuffle) # The button to shuffle the songs
     rewindButton = ft.Container(bgcolor="transparent",width=30,height=30,left=336,top=27,padding=10,on_click=rewind)
     forwardButton = ft.Container(bgcolor="transparent",width=30,height=30,left=465,top=28,padding=10,on_click=forward)
-    slider = ft.Container(content=ft.Slider(min=0, max=100, label="{value}%",width=335),bgcolor="transparent",left=570,top=12,padding=10)
+    progress_bar = ft.Container(content=ft.ProgressBar(width=335, value=0, color="white"),bgcolor="transparent",left=582,top=34,padding=10)
+    current_song_text = ft.Container(content=ft.Text("", color="black", size=20), top=8, left=610, visible=False)
 
 
     #? sideBarButtons
@@ -337,15 +353,13 @@ def main(page: ft.Page):
     playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=savePlaylist,width=400,bgcolor="black", color="white"),bgcolor="transparent",left=480,top=30,padding=5,visible=False) # temporary save button
     
     playListSongs = ft.Container(
-    content=ft.Column([playlist_songs_table], spacing=10),
-    bgcolor="#E9E8E7",
-    width=590,
-    height=200,
-    left=340,top=290,padding=10,visible=False
-)
-
+        content=ft.Column([playlist_songs_table], spacing=10),
+        bgcolor="#E9E8E7",
+        width=590,
+        height=200,
+        left=340,top=290,padding=10,visible=False
+    )
     # librarySongs = ft.Container(width=600,height=170,bgcolor="#E9E8E7",left=330,top=480,padding=10,visible=False)
-
 
     playlist_display = ft.Row(spacing=10, wrap=True) 
 
@@ -366,15 +380,7 @@ def main(page: ft.Page):
         visible=True
     )
 
-    librarySongs = ft.ListView(
-        controls=[add_songs_table],
-        height=190,
-        width=568,
-        left=360,
-        top=520,
-        expand=True,
-        visible=False
-    )
+    librarySongs = ft.ListView(controls=[add_songs_table], height=190, width=568, left=360, top=520, expand=True, visible=False)
 
     #? Playing the Playlist 
     playButtonPlaylist = ft.Container(bgcolor="transparent",width=95,height=55,left=645,top=185,padding=10,visible=False) 
@@ -394,9 +400,9 @@ def main(page: ft.Page):
 
     designStack = ft.Stack([lobbyDesign,createPlaylistButton,editPlaylistButton,addplaylistButton,songButton,
     playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionField,playlistSaveButton,playButton,
-    slider,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,
+    progress_bar,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,
     coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs,audio_player,
-    songNameField, youtubeLinkField, addsongButton, addsongfile, homeContainer, filenamedisplay])
+    songNameField, youtubeLinkField, addsongButton, addsongfile, homeContainer, filenamedisplay, current_song_text])
     
     page.add(designStack)
     page.update()
@@ -414,3 +420,4 @@ def main(page: ft.Page):
     #? )
 
 ft.app(target=main)
+
