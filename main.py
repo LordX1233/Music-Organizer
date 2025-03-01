@@ -141,13 +141,13 @@ def main(page: ft.Page):
         pass
 
     def make_everything_invisible():
-        current_song_text.visible = filenamedisplay.visible = addsongfile.visible = addsongButton.visible = youtubeLinkField.visible = songNameField.visible = coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = songsQuantity.visible = playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionField.visible = playlistSaveButton.visible = homeContainer.visible = False
+        volume_slider.visible = current_song_text.visible = filenamedisplay.visible = addsongfile.visible = addsongButton.visible = youtubeLinkField.visible = songNameField.visible = coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = songsQuantity.visible = playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionField.visible = playlistSaveButton.visible = homeContainer.visible = False
         page.update()
     
     def homeScreen(e=None):
         lobbyDesign.src=get_asset_path("music player.png")
         make_everything_invisible()
-        current_song_text.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible= homeContainer.visible = True
+        volume_slider.visible = current_song_text.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible= homeContainer.visible = True
         page.update()
         playlist_display.controls.clear()
         page.update()
@@ -211,7 +211,6 @@ def main(page: ft.Page):
     def addSongClicked(e, file_path):
         nonlocal currentmusicfile
         if songNameField.content.value not in {os.path.splitext(song)[0] for song in library_list}:
-            print(library_list)
             if youtubeLinkField.content.value == "":
                 print(currentmusicfile)
                 file_extension = os.path.splitext(file_path)[1]
@@ -241,9 +240,10 @@ def main(page: ft.Page):
             filenamedisplay.content.color = 'red'
             filenamedisplay.content.value = "Invalid Name"
         songs_table_load()
+        print(library_list)
         page.update
         filenamedisplay.content.color = 'black'
-        filenamedisplay.content.value = ""
+        filenamedisplay.content.value = os.path.basename(currentmusicfile)
     
     def songsScreen(e):
         lobbyDesign.src=get_asset_path("songsScreen.png")
@@ -253,17 +253,16 @@ def main(page: ft.Page):
         page.update()
     
     def addSongFileClicked(e, page): 
-        nonlocal currentmusicfile, currentmusicfile2 
+        nonlocal currentmusicfile 
         if filenamedisplay.content.value == "":      
             def fileSelected(e: ft.FilePickerResultEvent):
-                nonlocal currentmusicfile, currentmusicfile2 
+                nonlocal currentmusicfile
                 if e.files:
                     file = e.files[0]
                     filenamedisplay.content.value = file.name
                     currentmusicfile = file.path
-                    currentmusicfile2 = file.path
                 page.update()
-
+            
             filePicker = ft.FilePicker(on_result=fileSelected)
             page.overlay.append(filePicker)
             page.update() 
@@ -277,10 +276,9 @@ def main(page: ft.Page):
             page.update()
 
     def check_add_change(e):
-        nonlocal currentmusicfile, currentmusicfile2
+        nonlocal currentmusicfile
         if songNameField.content.value != "" and (youtubeLinkField.content.value != "" or currentmusicfile != ""):
             addsongButton.visible = True
-            currentmusicfile = currentmusicfile2
         else:
             addsongButton.visible = False
         page.update()
@@ -436,7 +434,6 @@ def main(page: ft.Page):
     songNameField = ft.Container(content=ft.TextField(color="black",border_color="black", hint_text="Enter Song Name:", text_size=20, width=450, cursor_color="black", bgcolor="white", on_change=check_add_change),bgcolor="transparent",left=290,top=85.5,padding=10,visible=False)
     youtubeLinkField = ft.Container(content=ft.TextField(color="black",border_color="black", hint_text="Enter Youtube Link:", text_size=20, width=350, cursor_color="black", bgcolor="white", on_change=check_add_change),bgcolor="transparent",left=570,top=175,padding=10,visible=False)
     currentmusicfile = ""
-    currentmusicfile2 = ""
     filenamedisplay = ft.Container(content=(ft.Text("", color="black")), top=245, left= 300)
     addsongButton = ft.Container(bgcolor="transparent",width=158,height=51,left=782,top=97,padding=10,on_click= lambda e: addSongClicked(e, currentmusicfile), visible=False)
     addsongfile = ft.Container(bgcolor="transparent",width=155,height=51,left=298,top=187,padding=10,on_click=lambda e: addSongFileClicked(e,page), visible=False, on_tap_down=check_add_change)
