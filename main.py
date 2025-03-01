@@ -5,6 +5,7 @@ import os
 from pytubefix import YouTube
 import shutil
 import sys
+import random
 
 
 import asyncio
@@ -27,9 +28,11 @@ def main(page: ft.Page):
     page.window.resizable = False
 
     playing = False
+    playing_playlist = False
 
     audio_player = ft.Audio(src=" ", autoplay=True)
     library_list = []
+    playlist_list = []
     current_song_index = 0
 
     def playsong(e, song):
@@ -38,7 +41,8 @@ def main(page: ft.Page):
         playButton.content.icon = ft.Icons.PAUSE_SHARP
         playing = True
         audio_player.play()
-        current_song_index = library_list.index(song)
+        if playing_playlist:current_song_index = playlist_list.index(song)
+        else: current_song_index = library_list.index(song)
         current_song_text.content.value = os.path.splitext(song)[0]
         audio_player.on_ended = lambda e: forward(e)
         audio_player.on_position_changed = lambda e: update_progress()
@@ -254,7 +258,6 @@ def main(page: ft.Page):
             page.update()
 
     def check_add_change(e):
-        print(library_list)
         if songNameField.content.value != "" and (youtubeLinkField.content.value != "" or currentmusicfile != ""):
             addsongButton.visible = True
         else:
@@ -305,8 +308,14 @@ def main(page: ft.Page):
         pass
 
     def shuffle(e):
+        if playing_playlist:
+            random.shuffle(playlist_list)
+            playsong(None, playlist_list[0])
+        else:
+            random.shuffle(library_list)
+            playsong(None, library_list[0])
+        current_song_text.visible = True
         page.update()
-        pass
 
     def rewind(e):
         nonlocal current_song_index 
