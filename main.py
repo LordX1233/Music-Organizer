@@ -44,7 +44,7 @@ def main(page: ft.Page):
     def playsong(e, song):
         nonlocal playing, current_song_index, playing_playlist, playlist_list
         audio_player.src = get_asset_path(song, subfolder="Songs")
-        playButton.content.icon = ft.icons.PAUSE_SHARP
+        playButton.content.icon = ft.Icons.PAUSE_SHARP
         playing = True
         audio_player.play()
 
@@ -72,8 +72,8 @@ def main(page: ft.Page):
         
     songs_table = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("Song name", style=ft.TextStyle(color=ft.colors.WHITE), width=490)),
-            ft.DataColumn(ft.Text("", style=ft.TextStyle(color=ft.colors.WHITE))),
+            ft.DataColumn(ft.Text("Song name", style=ft.TextStyle(color=ft.Colors.WHITE), width=490)),
+            ft.DataColumn(ft.Text("", style=ft.TextStyle(color=ft.Colors.WHITE))),
         ],
         heading_row_color="black",
     ) 
@@ -107,9 +107,9 @@ def main(page: ft.Page):
         for row in rows:
             edit_playlists_table.rows.append(
                 ft.DataRow(cells=[
-                    ft.DataCell(ft.Text(row["name"], style=ft.TextStyle(color=ft.colors.BLACK))), 
+                    ft.DataCell(ft.Text(row["name"], style=ft.TextStyle(color=ft.Colors.BLACK))), 
                     ft.DataCell(ft.Image(width=40, height=40, fit=ft.ImageFit.FILL, src_base64= row["image"])), 
-                    ft.DataCell(ft.IconButton(ft.icons.EDIT_SHARP, icon_color=ft.colors.BLUE, on_click=lambda e, r=row: editPlaylistClicked(e, r))),
+                    ft.DataCell(ft.IconButton(ft.Icons.EDIT_SHARP, icon_color=ft.Colors.BLUE, on_click=lambda e, r=row: editPlaylistClicked(e, r))),
                 ])
             )
         page.update()
@@ -122,8 +122,8 @@ def main(page: ft.Page):
                 file_name, _ = os.path.splitext(file) 
                 add_songs_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.colors.BLACK))), 
-                        ft.DataCell(ft.IconButton(ft.icons.ADD_CIRCLE, icon_color=ft.colors.GREEN, on_click=lambda e, song=file_name: add_song_to_playlist(e, song))),
+                        ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.Colors.BLACK))), 
+                        ft.DataCell(ft.IconButton(ft.Icons.ADD_CIRCLE, icon_color=ft.Colors.GREEN, on_click=lambda e, song=file_name: add_song_to_playlist(e, song))),
                     ])
                 )
         page.update()
@@ -166,15 +166,15 @@ def main(page: ft.Page):
     
     edit_playlist_songs_table = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("", style=ft.TextStyle(color=ft.colors.WHITE), width=405)),
-            ft.DataColumn(ft.Text("", style=ft.TextStyle(color=ft.colors.WHITE), width=58)),
+            ft.DataColumn(ft.Text("", style=ft.TextStyle(color=ft.Colors.WHITE), width=405)),
+            ft.DataColumn(ft.Text("", style=ft.TextStyle(color=ft.Colors.WHITE), width=58)),
         ],
         heading_row_height=0,
     )
 
     playlist_songs_table = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("", style=ft.TextStyle(color=ft.colors.WHITE), width=400)),
+            ft.DataColumn(ft.Text("", style=ft.TextStyle(color=ft.Colors.WHITE), width=400)),
         ],
         heading_row_height=0,
     )
@@ -198,8 +198,8 @@ def main(page: ft.Page):
         for row in rows:
             edit_playlist_songs_table.rows.append(
                 ft.DataRow(cells=[
-                    ft.DataCell(ft.Text(row[0], style=ft.TextStyle(color=ft.colors.BLACK))), 
-                    ft.DataCell(ft.IconButton(ft.icons.DELETE, icon_color=ft.colors.RED, on_click=lambda e, f=row[0]: remove_song_from_playlist(e, f))),
+                    ft.DataCell(ft.Text(row[0], style=ft.TextStyle(color=ft.Colors.BLACK))), 
+                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color=ft.Colors.RED, on_click=lambda e, f=row[0]: remove_song_from_playlist(e, f))),
                 ])
             )
         page.update()
@@ -223,8 +223,8 @@ def main(page: ft.Page):
                     conn.commit() 
                 songs_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
-                        ft.DataCell(ft.Icon(ft.icons.DELETE, color=ft.colors.RED), on_tap=lambda e, f=file: delete_song(e, f)),
+                        ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.Colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
+                        ft.DataCell(ft.Icon(ft.Icons.DELETE, color=ft.Colors.RED), on_tap=lambda e, f=file: delete_song(e, f)),
                     ])
                 )
                 library_list.append(file)
@@ -251,10 +251,10 @@ def main(page: ft.Page):
         pass
 
     def make_everything_invisible():
-        row_covers.visible = playlistName.visible = playlistDescription.visible = playlistDeleteButton.visible = editPlaylists.visible = volume_slider.visible = current_song_text.visible = filenamedisplay.visible = addsongfile.visible = addsongButton.visible = youtubeLinkField.visible = songNameField.visible = coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = playlistCoverButton.visible = playlistNameField.visible = playlistDescriptionField.visible = playlistSaveButton.visible = homeContainer.visible = False
+        row_covers.visible = playlistName.visible = playlistDescription.visible = playlistDeleteButton.visible = editPlaylists.visible = volume_slider.visible = current_song_text.visible = filenamedisplay.visible = addsongfile.visible = addsongButton.visible = youtubeLinkField.visible = songNameField.visible = coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = playlistCoverButton.visible = playlistNameField.visible = edit_playlistNameField.visible= playlistDescriptionField.visible = edit_playlistDescriptionField.visible = playlistSaveButton.visible = homeContainer.visible = False
         page.update()
     
-    def homeScreen(e=None):
+    def homeScreen(e):
         lobbyDesign.src=get_asset_path("music player.png")
         make_everything_invisible()
         row_covers.visible = volume_slider.visible = current_song_text.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible= homeContainer.visible = True
@@ -318,7 +318,7 @@ def main(page: ft.Page):
             full_name = get_full_filename(row[0])
             playlist_songs_table.rows.append(
                 ft.DataRow(cells=[
-                    ft.DataCell(ft.Text(row[0], style=ft.TextStyle(color=ft.colors.BLACK)), on_tap=lambda e, fu=full_name: playsong(e, fu)),
+                    ft.DataCell(ft.Text(row[0], style=ft.TextStyle(color=ft.Colors.BLACK)), on_tap=lambda e, fu=full_name: playsong(e, fu)),
                 ]))
             playlist_list.append(full_name)
         
@@ -344,18 +344,20 @@ def main(page: ft.Page):
 
         #! para guardar el paylist
     def savePlaylist(e):
-        global selected_image_path
-        print(f"Name: {playlistNameField.content.value}")
-        print(f"Description: {playlistDescriptionField.content.value}")
-        print(f"Image Path: {selected_image_path}")
-
-        if playlistNameField.content.value and playlistDescriptionField.content.value and selected_image_path:
-            playlists.append({
-                "name": playlistNameField.content.value,
-                "description": playlistDescriptionField.content.value,
-                "cover": selected_image_path
-            })
-            homeScreen(None)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if coverImage.src_base64 == "":
+            with open(get_asset_path("baseIcon.png"), "rb") as image_file:
+                convertImgToString = base64.b64encode(image_file.read()).decode()
+                coverImage.src_base64=convertImgToString
+        cursor.execute("INSERT INTO Playlists (name, image, description) VALUES (?, ?, ?)", (playlistNameField.content.value, coverImage.src_base64,playlistDescriptionField.content.value))
+        coverImage.src_base64 = playlistNameField.content.value = playlistDescriptionField.content.value = ""
+        print("Added Succesfully")
+        playlist_id = cursor.lastrowid
+        cursor.execute("UPDATE Song_Playlist SET PlaylistID = ? WHERE PlaylistID = 0", (playlist_id,))
+        conn.commit()
+        conn.close()
+        homeScreen(None)
 
         
 
@@ -364,9 +366,9 @@ def main(page: ft.Page):
         update_side_playlists()
         lobbyDesign.src=get_asset_path("editPlaylist.png")
         make_everything_invisible()
-        playlistDeleteButton.visible = coverImage.visible = playlistCoverButton.visible = playlistNameField.visible = playlistDescriptionField.visible = playListSongs.visible = librarySongs.visible = True
-        playlistNameField.content.value = row['name']
-        playlistDescriptionField.content.value = row['description']
+        playlistDeleteButton.visible = coverImage.visible = playlistCoverButton.visible = edit_playlistNameField.visible = edit_playlistDescriptionField.visible = playListSongs.visible = librarySongs.visible = True
+        edit_playlistNameField.content.value = row['name']
+        edit_playlistDescriptionField.content.value = row['description']
         coverImage.src_base64 = row['image']
         current_playlist_id = row['PlaylistID']
         print(current_playlist_id)
@@ -452,25 +454,16 @@ def main(page: ft.Page):
         page.update()
 
 
-    def playlistCoverClicked(e, page, coverImage):
+    def playlistCoverClicked(e):
         print("choose the album cover")
-        update_side_playlists()
-        nonlocal current_playlist_id
         def fileSelected(e: ft.FilePickerResultEvent):
-            nonlocal current_playlist_id
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            global selected_image_path  
             if e.files:
                 file = e.files[0]
                 selected_image_path = file.path  
                 with open(selected_image_path, "rb") as image_file:
                     convertImgToString = base64.b64encode(image_file.read()).decode()
                     coverImage.src_base64=convertImgToString
-                coverImage.visible = True
-                cursor.execute("UPDATE Playlists SET image = ? WHERE PlaylistID = ?", (convertImgToString, current_playlist_id))
-                conn.commit()
-                
+                coverImage.visible = True                
             page.update()
 
         filePicker = ft.FilePicker(on_result=fileSelected)
@@ -493,11 +486,11 @@ def main(page: ft.Page):
     def musicPlay(e):
         nonlocal playing
         if playing:
-            playButton.content.icon = ft.icons.PLAY_ARROW
+            playButton.content.icon = ft.Icons.PLAY_ARROW
             playing = False
             audio_player.pause()
         else:
-            playButton.content.icon = ft.icons.PAUSE_SHARP
+            playButton.content.icon = ft.Icons.PAUSE_SHARP
             playing = True
             audio_player.resume()
         page.update()
@@ -567,7 +560,7 @@ def main(page: ft.Page):
         nonlocal current_playlist_id
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("UPDATE Playlists SET name = ?, description = ? WHERE PlaylistID = ?", (playlistNameField.content.value, playlistDescriptionField.content.value, current_playlist_id))
+        cursor.execute("UPDATE Playlists SET name = ?, description = ? WHERE PlaylistID = ?", (edit_playlistNameField.content.value, edit_playlistDescriptionField.content.value, current_playlist_id))
         conn.commit()
     
     def delete_playlist(e):
@@ -587,7 +580,7 @@ def main(page: ft.Page):
         conn.close()
         playlistside.controls.clear()
         for row in rows:
-            playlistside.controls.append(ft.Container(ft.Text(row[0], style=ft.TextStyle(color=ft.colors.BLACK), size=20, weight=ft.FontWeight.BOLD), on_click=lambda e, id=row[1]: playlistScreen(e, id)))
+            playlistside.controls.append(ft.Container(ft.Text(row[0], style=ft.TextStyle(color=ft.Colors.BLACK), size=20, weight=ft.FontWeight.BOLD), on_click=lambda e, id=row[1]: playlistScreen(e, id)))
         page.update()
     
     def update_row_covers():
@@ -606,7 +599,7 @@ def main(page: ft.Page):
     #? On the Home Screen
     lobbyDesign = ft.Image(src=get_asset_path("music player.png"))
     addplaylistButton = ft.Container(bgcolor="transparent",width=194,height=194,left=262,top=171,padding=10,on_click=createPlaylistScreen) # The + Square at home-screen
-    playButton = ft.Container(content=ft.IconButton(icon=ft.icons.PLAY_ARROW,on_click=musicPlay,icon_color="white"),bgcolor="transparent",left=390,top=13,padding=10,visible=True) # The play button in Home
+    playButton = ft.Container(content=ft.IconButton(icon=ft.Icons.PLAY_ARROW,on_click=musicPlay,icon_color="white"),bgcolor="transparent",left=390,top=13,padding=10,visible=True) # The play button in Home
     shuffleButton = ft.Container(bgcolor="transparent",width=43,height=40,left=265,top=25,padding=10,on_click=shuffle) # The button to shuffle the songs
     rewindButton = ft.Container(bgcolor="transparent",width=30,height=30,left=336,top=27,padding=10,on_click=rewind)
     forwardButton = ft.Container(bgcolor="transparent",width=30,height=30,left=465,top=28,padding=10,on_click=forward, on_long_press=speed_up)
@@ -625,12 +618,12 @@ def main(page: ft.Page):
     
 
     #? When creating the playlist
-    playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=lambda e: playlistCoverClicked(e, page, coverImage)) # Too add a playlist cover when creating the playlist
+    playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=playlistCoverClicked) # Too add a playlist cover when creating the playlist
     coverImage = ft.Image(src_base64="", width=240,height=240,left=366,top=25, visible=False, fit=ft.ImageFit.FILL) #to add a image
-    playlistNameField = ft.Container(content=ft.TextField(color="black",border_color="black", on_change=update_edit_fields),bgcolor="transparent",left=620,top=95,padding=10,visible=False, ) # The + Square at home-screen
-    playlistDescriptionField = ft.Container(content=ft.TextField(color="black",border_color="black", on_change=update_edit_fields),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
+    playlistNameField = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False, ) # The + Square at home-screen
+    playlistDescriptionField = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
     playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=savePlaylist,width=100,bgcolor="black", color="white"),bgcolor="transparent",left=880,top=10,padding=5,visible=False) # temporary save button
-    playlistDeleteButton = ft.Container(content=ft.IconButton(on_click=delete_playlist,width=100,bgcolor="Red", icon_color="white", icon=ft.icons.DELETE),bgcolor="transparent",left=880,top=10,padding=5,visible=False)
+    playlistDeleteButton = ft.Container(content=ft.IconButton(on_click=delete_playlist,width=100,bgcolor="Red", icon_color="white", icon=ft.Icons.DELETE),bgcolor="transparent",left=880,top=10,padding=5,visible=False)
 
     playListSongs = ft.ListView(
         controls=[edit_playlist_songs_table],
@@ -671,6 +664,8 @@ def main(page: ft.Page):
 
     #? Editing Playlist
     editPlaylists = ft.ListView(controls=[edit_playlists_table], height=635, width=588, left=340, top=81, expand=True, visible=False)
+    edit_playlistNameField = ft.Container(content=ft.TextField(color="black",border_color="black", on_change=update_edit_fields),bgcolor="transparent",left=620,top=95,padding=10,visible=False, )
+    edit_playlistDescriptionField = ft.Container(content=ft.TextField(color="black",border_color="black", on_change=update_edit_fields),bgcolor="transparent",left=620,top=200,padding=10,visible=False)
 
 
     #? Songs stuff
@@ -686,7 +681,8 @@ def main(page: ft.Page):
     progress_bar,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,
     coverImagePlaylist, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs,audio_player,
     songNameField, youtubeLinkField, addsongButton, addsongfile, homeContainer, filenamedisplay, current_song_text, volume_slider,
-    editPlaylists, playlistDeleteButton, playlistside, playlistName, playlistDescription, row_covers])
+    editPlaylists, playlistDeleteButton, playlistside, playlistName, playlistDescription, row_covers, edit_playlistNameField,
+    edit_playlistDescriptionField])
     
     page.add(designStack)
     update_side_playlists()
