@@ -174,7 +174,7 @@ def main(page: ft.Page):
 
     playlist_songs_table = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("", style=ft.TextStyle(color=ft.Colors.WHITE), width=405)),
+            ft.DataColumn(ft.Text("", style=ft.TextStyle(color=ft.Colors.WHITE), width=400)),
         ],
         heading_row_height=0,
     )
@@ -251,15 +251,16 @@ def main(page: ft.Page):
         pass
 
     def make_everything_invisible():
-        playlistName.visible = playlistDescription.visible = playlistDeleteButton.visible = editPlaylists.visible = volume_slider.visible = current_song_text.visible = filenamedisplay.visible = addsongfile.visible = addsongButton.visible = youtubeLinkField.visible = songNameField.visible = coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = playlistCoverButton.visible = playlistNameField.visible = playlistDescriptionField.visible = playlistSaveButton.visible = homeContainer.visible = False
+        row_covers.visible = playlistName.visible = playlistDescription.visible = playlistDeleteButton.visible = editPlaylists.visible = volume_slider.visible = current_song_text.visible = filenamedisplay.visible = addsongfile.visible = addsongButton.visible = youtubeLinkField.visible = songNameField.visible = coverImagePlaylist.visible = playlistSongsList.visible = playListSongs.visible = librarySongs.visible = songs_scrollable_table.visible = coverImage.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible = playButtonPlaylist.visible = shuffleButtonPlaylist.visible = playlistCoverButton.visible = playlistNameField.visible = playlistDescriptionField.visible = playlistSaveButton.visible = homeContainer.visible = False
         page.update()
     
     def homeScreen(e=None):
         lobbyDesign.src=get_asset_path("music player.png")
         make_everything_invisible()
-        volume_slider.visible = current_song_text.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible= homeContainer.visible = True
+        row_covers.visible = volume_slider.visible = current_song_text.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible= homeContainer.visible = True
         playlist_display.controls.clear()
         update_side_playlists()
+        update_row_covers()
         page.update()
         for playlist in playlists:
             playlist_display.controls.append(
@@ -664,7 +665,7 @@ def main(page: ft.Page):
     playButtonPlaylist = ft.Container(bgcolor="transparent",width=93,height=55,left=659,top=190,visible=False, on_click=play) 
     shuffleButtonPlaylist = ft.Container(bgcolor="transparent",width=94,height=55,left=808,top=190,visible=False, on_click=shuffle)
     coverImagePlaylist = ft.Image(src_base64="",width=264,height=263,left=360,top=32,visible=False, fit=ft.ImageFit.FILL)
-    playlistSongsList = ft.ListView(controls=[playlist_songs_table],width=579,height=390,left=355,top=314,visible=False, expand=True)
+    playlistSongsList = ft.ListView(controls=[playlist_songs_table],width=564,height=390,left=365,top=314,visible=False, expand=True)
     playlistName = ft.Text("",color="black",left=650,top=30,size=30,visible=False)
     playlistDescription = ft.Text("",color="black",left=652,top=90,visible=False)
 
