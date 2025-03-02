@@ -2,7 +2,7 @@
 # import base64
 # import sys
 # import asyncio
-#! This modules were doing nothing for now, don't know if you are going to use the in the future
+#! These modules were doing nothing for now, don't know if you are going to use them in the future
 
 import flet as ft
 import flet_audio as fta
@@ -13,7 +13,7 @@ import random
 
 playlists = []
 selected_image_path = None  
-# def get_asset_path(filename, subfolder="Assets"): #! This function is no longer necessary, check line 459, assets_dir argument of the ft.app() function
+# def get_asset_path(filename, subfolder="Assets"): #! This function is no longer necessary, check ft.app() at the bottom
 #     if getattr(sys, 'frozen', False):
 #         base_path = os.path.join(sys._MEIPASS, subfolder)
 #     else:
@@ -32,7 +32,7 @@ def main(page: ft.Page):
     playing = False
     playing_playlist = False
 
-    audio_player = fta.Audio(src="Songs/Never Gonna Give Up.mp3", autoplay=False) #! Adding a audio object with a empty src would crash the app 
+    audio_player = fta.Audio(src="Songs/Never Gonna Give Up.mp3", autoplay=False) #! Adding an audio object with an empty src would crash the app 
     page.overlay.append(audio_player) #! Audio object was not added to page overlay, so for the app, it didn't exist
     library_list = []
     playlist_list = []
