@@ -1,23 +1,25 @@
-import sqlite3
+# import sqlite3 
+# import base64
+# import sys
+# import asyncio
+#! This modules were doing nothing for now, don't know if you are going to use the in the future
+
 import flet as ft
-import base64
+import flet_audio as fta
 import os
 from pytubefix import YouTube
 import shutil
-import sys
 import random
-
-
-import asyncio
 
 playlists = []
 selected_image_path = None  
-def get_asset_path(filename, subfolder="Assets"):
-    if getattr(sys, 'frozen', False):
-        base_path = os.path.join(sys._MEIPASS, subfolder)
-    else:
-        base_path = os.path.join(os.path.abspath(subfolder))
-    return os.path.join(base_path, filename)
+# def get_asset_path(filename, subfolder="Assets"): #! This function is no longer necessary, check line 456, assets_dir argument of the ft.app() function
+#     if getattr(sys, 'frozen', False):
+#         base_path = os.path.join(sys._MEIPASS, subfolder)
+#     else:
+#         base_path = os.path.join(os.path.abspath(subfolder))
+#     return os.path.join(base_path, filename)
+#! Regarding this same function, I altered and fixed all routes and changed directory hierarchy, now everything belongs to the assets folder
 
 
 def main(page: ft.Page):
@@ -30,14 +32,15 @@ def main(page: ft.Page):
     playing = False
     playing_playlist = False
 
-    audio_player = ft.Audio(src=" ", autoplay=True)
+    audio_player = fta.Audio(src="Songs/Never Gonna Give Up.mp3", autoplay=False) #! Adding a audio object with a empty src would crash the app 
+    page.overlay.append(audio_player) #! Audio object was not added to page overlay, so for the app, it didn't exist
     library_list = []
     playlist_list = []
     current_song_index = 0
 
     def playsong(e, song):
         nonlocal playing, current_song_index
-        audio_player.src = get_asset_path(song, subfolder="Songs")
+        audio_player.src = f"Songs/{song}" #! Comment in line 22
         playButton.content.icon = ft.Icons.PAUSE_SHARP
         playing = True
         audio_player.play()
@@ -49,14 +52,13 @@ def main(page: ft.Page):
     
     def delete_song(e, song):
         print(song)
-        os.remove(get_asset_path(song, subfolder="Songs"))
+        os.remove(f"Songs/{song}") #! Comment in line 22
         songs_table_load()
-        pass
         
     songs_table = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("Song name", style=ft.TextStyle(color=ft.colors.WHITE), width=490)),
-            ft.DataColumn(ft.Text("Delete", style=ft.TextStyle(color=ft.colors.WHITE))),
+            ft.DataColumn(ft.Text("Song name", style=ft.TextStyle(color=ft.Colors.WHITE), width=490)),
+            ft.DataColumn(ft.Text("Delete", style=ft.TextStyle(color=ft.Colors.WHITE))),
         ],
         heading_row_color="black",
     ) 
@@ -71,13 +73,13 @@ def main(page: ft.Page):
 
     def add_songs_table_load():
         add_songs_table.rows.clear()
-        for root, dirs, files in os.walk("Songs"):
+        for root, dirs, files in os.walk("assets/Songs"): #! Comment in line 22
             for file in files:
                 file_name, _ = os.path.splitext(file) 
                 add_songs_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
-                        ft.DataCell(ft.IconButton(ft.Icons.ADD_CIRCLE, icon_color=ft.colors.GREEN, on_click=add_song_to_playlist)),
+                        ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.Colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
+                        ft.DataCell(ft.IconButton(ft.Icons.ADD_CIRCLE, icon_color=ft.Colors.GREEN, on_click=add_song_to_playlist)),
                     ])
                 )
         page.update()
@@ -85,8 +87,8 @@ def main(page: ft.Page):
     def add_song_to_playlist(e, song):
         playlist_songs_table.rows.append(
             ft.DataRow(cells=[
-                ft.DataCell(ft.Text(song, style=ft.TextStyle(color=ft.colors.BLACK))),
-                ft.DataCell(ft.Icon(ft.Icons.DELETE, color=ft.colors.RED, on_click=lambda e, f=song: remove_song_from_playlist(e, f))),
+                ft.DataCell(ft.Text(song, style=ft.TextStyle(color=ft.Colors.BLACK))),
+                ft.DataCell(ft.Icon(ft.Icons.DELETE, color=ft.Colors.RED, on_click=lambda e, f=song: remove_song_from_playlist(e, f))),
             ])
         )
         page.update()
@@ -100,28 +102,26 @@ def main(page: ft.Page):
     
     playlist_songs_table = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("Song name", style=ft.TextStyle(color=ft.colors.WHITE), width=440)),
-            ft.DataColumn(ft.Text("Delete", style=ft.TextStyle(color=ft.colors.WHITE))),
+            ft.DataColumn(ft.Text("Song name", style=ft.TextStyle(color=ft.Colors.WHITE), width=440)),
+            ft.DataColumn(ft.Text("Delete", style=ft.TextStyle(color=ft.Colors.WHITE))),
         ],
         heading_row_color="black",
     )
 
-            
     def songs_table_load():
         songs_table.rows.clear()
         library_list.clear()
-        for root, dirs, files in os.walk("Songs"):
+        for root, dirs, files in os.walk("assets/Songs"): #! Comment in line 22
             for file in files:
                 file_name, _ = os.path.splitext(file) 
                 songs_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
-                        ft.DataCell(ft.Icon(ft.Icons.DELETE, color=ft.colors.RED), on_tap=lambda e, f=file: delete_song(e, f)),
+                        ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.Colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
+                        ft.DataCell(ft.Icon(ft.Icons.DELETE, color=ft.Colors.RED), on_tap=lambda e, f=file: delete_song(e, f)),
                     ])
                 )
                 library_list.append(file)
         page.update()
-    
 
     songs_scrollable_table = ft.ListView(
         controls=[songs_table],
@@ -136,7 +136,6 @@ def main(page: ft.Page):
     songs_table_load()
     add_songs_table_load()
 
-
     def fetch_list_of_songs():
         pass
 
@@ -145,7 +144,7 @@ def main(page: ft.Page):
         page.update()
     
     def homeScreen(e=None):
-        lobbyDesign.src=get_asset_path("music player.png")
+        lobbyDesign.src="images/music player.png"
         make_everything_invisible()
         volume_slider.visible = current_song_text.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible= homeContainer.visible = True
         page.update()
@@ -167,27 +166,27 @@ def main(page: ft.Page):
         page.update()
 
     def playlistScreen(e):
-        lobbyDesign.src=get_asset_path("playlistScreen.png")
+        lobbyDesign.src="images/playlistScreen.png" #! Comment in line 22
         make_everything_invisible()
         playButtonPlaylist.visible = shuffleButtonPlaylist.visible = coverImagePlaylist.visible = songsQuantity.visible = playlistSongsList.visible = True
         
         page.update()
 
     def createPlaylistScreen(e):
-        lobbyDesign.src=get_asset_path("createPlaylist.png")
+        lobbyDesign.src="images/createPlaylist.png" #! Comment in line 22
         make_everything_invisible()
         playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionField.visible = playlistSaveButton.visible = playListSongs.visible = librarySongs.visible = True
         add_songs_table_load()
         page.update()
 
     def editPlaylistScreen(e):
-        lobbyDesign.src = get_asset_path("editPlaylist.png")
+        lobbyDesign.src = "images/editPlaylist.png" #! Comment in line 22
         make_everything_invisible()
         playlistCoverButton.visible = playlistNameButton.visible = playlistDescriptionField.visible = playlistSaveButton.visible = playListSongs.visible = librarySongs.visible = True
         add_songs_table_load()
         page.update()
 
-        #! para guardar el paylist
+        #! para guardar el playlist
     def savePlaylist(e):
         global selected_image_path
         print(f"Name: {playlistNameButton.content.value}")
@@ -202,8 +201,6 @@ def main(page: ft.Page):
             })
             homeScreen(None)
 
-        
-
     def editPlaylistClicked(e):
         print("edit playlistClicked")
         pass
@@ -214,7 +211,7 @@ def main(page: ft.Page):
             if youtubeLinkField.content.value == "":
                 print(currentmusicfile)
                 file_extension = os.path.splitext(file_path)[1]
-                new_file_name = f"{ songNameField.content.value}{file_extension}"  # Rename using song_name
+                new_file_name = f"{songNameField.content.value}{file_extension}"  # Rename using song_name
                 destination = os.path.join("Songs", new_file_name)  # Define new path
                 shutil.copy(file_path, destination)
                 youtubeLinkField.content.disabled = False
@@ -246,14 +243,15 @@ def main(page: ft.Page):
         filenamedisplay.content.value = os.path.basename(currentmusicfile)
     
     def songsScreen(e):
-        lobbyDesign.src=get_asset_path("songsScreen.png")
+        lobbyDesign.src="images/songsScreen.png" #! Comment in line 22
         make_everything_invisible()
         filenamedisplay.visible = addsongfile.visible = songs_scrollable_table.visible = songNameField.visible = youtubeLinkField.visible = True
         songs_table_load()
         page.update()
     
     def addSongFileClicked(e, page): 
-        nonlocal currentmusicfile 
+        nonlocal currentmusicfile
+        
         if filenamedisplay.content.value == "":      
             def fileSelected(e: ft.FilePickerResultEvent):
                 nonlocal currentmusicfile
@@ -305,6 +303,7 @@ def main(page: ft.Page):
 
 
     def update_progress():
+        print("test")
         current_position = audio_player.get_current_position()
         duration = audio_player.get_duration()
         progress = 0
@@ -367,7 +366,7 @@ def main(page: ft.Page):
     
         
     #? On the Home Screen
-    lobbyDesign = ft.Image(src=get_asset_path("music player.png"))
+    lobbyDesign = ft.Image("images/music player.png") #! Comment in line 22
     addplaylistButton = ft.Container(bgcolor="transparent",width=200,height=193,left=257,top=167,padding=10,on_click=createPlaylistScreen) # The + Square at home-screen
     playButton = ft.Container(content=ft.IconButton(icon=ft.Icons.PLAY_ARROW,on_click=musicPlay,icon_color="white"),bgcolor="transparent",left=390,top=13,padding=10,visible=True) # The play button in Home
     shuffleButton = ft.Container(bgcolor="transparent",width=43,height=40,left=265,top=25,padding=10,on_click=shuffle) # The button to shuffle the songs
@@ -441,12 +440,10 @@ def main(page: ft.Page):
     designStack = ft.Stack([lobbyDesign,createPlaylistButton,editPlaylistButton,addplaylistButton,songButton,
     playlistCoverButton,coverImage,playlistNameButton,playlistDescriptionField,playlistSaveButton,playButton,
     progress_bar,homeButton,shuffleButton,rewindButton,forwardButton,playButtonPlaylist,shuffleButtonPlaylist,
-    coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs,audio_player,
+    coverImagePlaylist,songsQuantity, songs_scrollable_table ,playlistSongsList,playListSongs,librarySongs,
     songNameField, youtubeLinkField, addsongButton, addsongfile, homeContainer, filenamedisplay, current_song_text, volume_slider])
-    
+    #page.overlay.append(audio_player)
     page.add(designStack)
-    page.update()
-
 
     #? file_picker = ft.FilePicker(on_result=on_file_selected)
     #? page.overlay.append(file_picker)
@@ -459,5 +456,4 @@ def main(page: ft.Page):
     #?     )
     #? )
 
-ft.app(target=main)
-
+ft.app(target=main, assets_dir="assets") #! get_attrb_dir was not necessary from the very beginning https://flet.dev/docs/cookbook/assets/

@@ -1,8 +1,9 @@
 import flet as ft
+import flet_audio as fta
 
 def main(page: ft.Page):
-    audio1 = ft.Audio(
-        src="/Users/macbook/Documents/PROGRAMS/Flet/Music-Organizer/Songs/19-2000.wav", autoplay=True
+    audio1 = fta.Audio(
+        src="Songs/19-2000.wav", autoplay=True
     )
     page.overlay.append(audio1)
     page.add(
@@ -10,4 +11,4 @@ def main(page: ft.Page):
         ft.ElevatedButton("Stop playing", on_click=lambda _: audio1.pause()),
     )
 
-ft.app(main)
+ft.app(main, assets_dir="assets")
