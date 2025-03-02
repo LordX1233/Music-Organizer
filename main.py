@@ -79,23 +79,24 @@ def main(page: ft.Page):
                 add_songs_table.rows.append(
                     ft.DataRow(cells=[
                         ft.DataCell(ft.Text(file_name, style=ft.TextStyle(color=ft.Colors.BLACK)), on_tap=lambda e, f=file: playsong(e, f)), 
-                        ft.DataCell(ft.IconButton(ft.Icons.ADD_CIRCLE, icon_color=ft.Colors.GREEN, on_click=add_song_to_playlist)),
+                        ft.DataCell(ft.IconButton(ft.Icons.ADD_CIRCLE, icon_color=ft.Colors.GREEN, on_click=add_song_to_playlist)), #!Modified to fit add_song_to_playlist()
                     ])
                 )
         page.update()
     
     def add_song_to_playlist(e):
-        song = e.control.parent.parent.cells[0].content.value
+        song = e.control.parent.parent.cells[0].content.value #!Extract song name using datatable row cell value (expected as text object)
         playlist_songs_table.rows.append(
             ft.DataRow(cells=[
                 ft.DataCell(ft.Text(song, style=ft.TextStyle(color=ft.Colors.BLACK))),
-                ft.DataCell(ft.IconButton(ft.Icons.DELETE, bgcolor=ft.Colors.RED, on_click=remove_song_from_playlist)),
+                ft.DataCell(ft.IconButton(ft.Icons.DELETE, bgcolor=ft.Colors.RED, on_click=remove_song_from_playlist)), #!Modified to fit remove_song_from_playlist()
             ])
         )
         page.update()
     
     def remove_song_from_playlist(e):
-        playlist_songs_table.rows.remove(e.control.parent.parent)
+        playlist_songs_table.rows.remove(e.control.parent.parent) #!Get the exact row without looping
+        #!If you find this comment, it's 2 am and trying to fix all this was actually fun, good luck on Monday guys
         # print(playlist_songs_table.rows)
         # for row in playlist_songs_table.rows:   
         #     if row.cells[0].content == song:
