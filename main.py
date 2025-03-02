@@ -13,7 +13,7 @@ import random
 
 playlists = []
 selected_image_path = None  
-# def get_asset_path(filename, subfolder="Assets"): #! This function is no longer necessary, check line 456, assets_dir argument of the ft.app() function
+# def get_asset_path(filename, subfolder="Assets"): #! This function is no longer necessary, check line 459, assets_dir argument of the ft.app() function
 #     if getattr(sys, 'frozen', False):
 #         base_path = os.path.join(sys._MEIPASS, subfolder)
 #     else:
@@ -84,20 +84,25 @@ def main(page: ft.Page):
                 )
         page.update()
     
-    def add_song_to_playlist(e, song):
+    def add_song_to_playlist(e):
+        song = e.control.parent.parent.cells[0].content.value
         playlist_songs_table.rows.append(
             ft.DataRow(cells=[
                 ft.DataCell(ft.Text(song, style=ft.TextStyle(color=ft.Colors.BLACK))),
-                ft.DataCell(ft.Icon(ft.Icons.DELETE, color=ft.Colors.RED, on_click=lambda e, f=song: remove_song_from_playlist(e, f))),
+                ft.DataCell(ft.IconButton(ft.Icons.DELETE, bgcolor=ft.Colors.RED, on_click=remove_song_from_playlist)),
             ])
         )
         page.update()
     
-    def remove_song_from_playlist(e, song):
-        for row in playlist_songs_table.rows:
-            if row.cells[0].content == song:
-                playlist_songs_table.rows.remove(row)
-                break
+    def remove_song_from_playlist(e):
+        playlist_songs_table.rows.remove(e.control.parent.parent)
+        # print(playlist_songs_table.rows)
+        # for row in playlist_songs_table.rows:   
+        #     if row.cells[0].content == song:
+        #         playlist_songs_table.rows.remove(row)
+        #         print("found")
+        #         break
+        playlist_songs_table.update()
         page.update()
     
     playlist_songs_table = ft.DataTable(
@@ -303,7 +308,6 @@ def main(page: ft.Page):
 
 
     def update_progress():
-        print("test")
         current_position = audio_player.get_current_position()
         duration = audio_player.get_duration()
         progress = 0
