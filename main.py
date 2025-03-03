@@ -37,7 +37,7 @@ def main(page: ft.Page):
     playing = False
     playing_playlist = False
 
-    audio_player = fta.Audio(src="Songs/Never Gonna Give Up.mp3", autoplay=False)#! Adding an audio object with an empty src would crash the app 
+    audio_player = fta.Audio(src=get_asset_path(".mp3"), autoplay=False)#! Adding an audio object with an empty src would crash the app 
     page.overlay.append(audio_player) #! Audio object was not added to page overlay, so for the app, it didn't exist
     library_list = []
     playlist_list = []

@@ -1,4 +1,3 @@
-*.mp3
-*.WAV
-*.MP3
+Songs/*.WAV
+Songs/*.MP3
 .DS_Store
