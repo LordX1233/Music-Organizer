@@ -7,9 +7,12 @@ import shutil
 import sys
 import random
 import threading
+import flet_audio as fta
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(base_dir, 'musicOrganizer.db')
+global editing
+editing = False
 
 def get_db_connection():
     conn = sqlite3.connect(db_path)
@@ -34,7 +37,8 @@ def main(page: ft.Page):
     playing = False
     playing_playlist = False
 
-    audio_player = ft.Audio(src=" ", autoplay=True)
+    audio_player = fta.Audio(src="Songs/Never Gonna Give Up.mp3", autoplay=False)#! Adding an audio object with an empty src would crash the app 
+    page.overlay.append(audio_player) #! Audio object was not added to page overlay, so for the app, it didn't exist
     library_list = []
     playlist_list = []
     playlists = []
@@ -255,6 +259,10 @@ def main(page: ft.Page):
         page.update()
     
     def homeScreen(e):
+        global editing
+        if editing:
+            update_edit_fields(None)
+            editing = False
         lobbyDesign.src=get_asset_path("music player.png")
         make_everything_invisible()
         row_covers.visible = volume_slider.visible = current_song_text.visible = addplaylistButton.visible = playButton.visible = progress_bar.visible = rewindButton.visible = forwardButton.visible = shuffleButton.visible= homeContainer.visible = True
@@ -285,6 +293,10 @@ def main(page: ft.Page):
                 return file_name + ext
 
     def playlistScreen(e, id):
+        global editing
+        if editing:
+            update_edit_fields(None)
+            editing = False
         update_side_playlists()
         nonlocal playing_playlist, playlist_list
         lobbyDesign.src=get_asset_path("playlistScreen.png")
@@ -327,6 +339,10 @@ def main(page: ft.Page):
         page.update()
 
     def createPlaylistScreen(e):
+        global editing
+        if editing:
+            update_edit_fields(None)
+            editing = False
         lobbyDesign.src=get_asset_path("createPlaylist.png")
         make_everything_invisible()
         playlistCoverButton.visible = playlistNameField.visible = playlistDescriptionField.visible = playlistSaveButton.visible = playListSongs.visible = librarySongs.visible = True
@@ -334,6 +350,10 @@ def main(page: ft.Page):
         page.update()
 
     def editPlaylistScreen(e):
+        global editing
+        if editing:
+            update_edit_fields(None)
+            editing = False
         edit_playlists_table_load()
         lobbyDesign.src = get_asset_path("choosePlaylist.png")
         make_everything_invisible()
@@ -343,6 +363,7 @@ def main(page: ft.Page):
         page.update()
 
         #! para guardar el paylist
+
     def savePlaylist(e):
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -359,9 +380,11 @@ def main(page: ft.Page):
         conn.close()
         homeScreen(None)
 
-        
-
     def editPlaylistClicked(e, row):
+        global editing
+        if editing:
+            update_edit_fields(None)
+            editing = False
         nonlocal current_playlist_id
         update_side_playlists()
         lobbyDesign.src=get_asset_path("editPlaylist.png")
@@ -375,6 +398,7 @@ def main(page: ft.Page):
         add_songs_table_load()
         edit_playlist_songs_table_load()
         page.update()
+        editing = True
 
     def addSongClicked(e, file_path):
         update_side_playlists()
@@ -415,6 +439,10 @@ def main(page: ft.Page):
         filenamedisplay.content.value = os.path.basename(currentmusicfile)
     
     def songsScreen(e):
+        global editing
+        if editing:
+            update_edit_fields(None)
+            editing = False
         lobbyDesign.src=get_asset_path("songsScreen.png")
         make_everything_invisible()
         filenamedisplay.visible = addsongfile.visible = songs_scrollable_table.visible = songNameField.visible = youtubeLinkField.visible = True
@@ -556,11 +584,15 @@ def main(page: ft.Page):
     def volumechange(e):
         audio_player.volume = e.control.value/100
 
+
+#! update query
+
+
     def update_edit_fields(e):
         nonlocal current_playlist_id
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("UPDATE Playlists SET name = ?, description = ? WHERE PlaylistID = ?", (edit_playlistNameField.content.value, edit_playlistDescriptionField.content.value, current_playlist_id))
+        cursor.execute("UPDATE Playlists SET name = ?, image = ?, description = ? WHERE PlaylistID = ?", (edit_playlistNameField.content.value, coverImage.src_base64, edit_playlistDescriptionField.content.value, current_playlist_id))
         conn.commit()
     
     def delete_playlist(e):
