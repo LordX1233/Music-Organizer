@@ -1,3 +1,7 @@
 Songs/*.WAV
 Songs/*.MP3
 .DS_Store
+.DS_Store
+App_Icon.png
+MusicOrganizer.spec
+pyinstaller.py

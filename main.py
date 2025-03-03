@@ -6,7 +6,6 @@ from pytubefix import YouTube
 import shutil
 import sys
 import random
-import threading
 import flet_audio as fta
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
