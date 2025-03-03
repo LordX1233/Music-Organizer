@@ -590,10 +590,11 @@ def main(page: ft.Page):
 
     def update_edit_fields(e):
         nonlocal current_playlist_id
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("UPDATE Playlists SET name = ?, image = ?, description = ? WHERE PlaylistID = ?", (edit_playlistNameField.content.value, coverImage.src_base64, edit_playlistDescriptionField.content.value, current_playlist_id))
-        conn.commit()
+        if edit_playlistNameField.content.value != "":
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("UPDATE Playlists SET name = ?, image = ?, description = ? WHERE PlaylistID = ?", (edit_playlistNameField.content.value, coverImage.src_base64, edit_playlistDescriptionField.content.value, current_playlist_id))
+            conn.commit()
     
     def delete_playlist(e):
         nonlocal current_playlist_id
@@ -627,6 +628,13 @@ def main(page: ft.Page):
             temporary.append(ft.Container(ft.Image(src_base64=row[0], fit=ft.ImageFit.FILL), on_click=lambda e, id=row[1]: playlistScreen(e, id)))
         row_covers.controls = temporary
         page.update()
+    
+    def check_for_save(e):
+        if playlistNameField.content.value == "":
+            playlistSaveButton.content.disabled = True
+        else:
+            playlistSaveButton.content.disabled = False
+        page.update()
         
     #? On the Home Screen
     lobbyDesign = ft.Image(src=get_asset_path("music player.png"))
@@ -652,9 +660,9 @@ def main(page: ft.Page):
     #? When creating the playlist
     playlistCoverButton = ft.Container(bgcolor="transparent",width=222,height=223,left=366,top=25,padding=10,visible=False,on_click=playlistCoverClicked) # Too add a playlist cover when creating the playlist
     coverImage = ft.Image(src_base64="", width=240,height=240,left=366,top=25, visible=False, fit=ft.ImageFit.FILL) #to add a image
-    playlistNameField = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False, ) # The + Square at home-screen
-    playlistDescriptionField = ft.Container(content=ft.TextField(color="black",border_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
-    playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=savePlaylist,width=100,bgcolor="black", color="white"),bgcolor="transparent",left=880,top=10,padding=5,visible=False) # temporary save button
+    playlistNameField = ft.Container(content=ft.TextField(color="black",border_color="black", on_change=check_for_save, cursor_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False, ) # The + Square at home-screen
+    playlistDescriptionField = ft.Container(content=ft.TextField(color="black",border_color="black", cursor_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False) # Too add a playlist cover when creating the playlist
+    playlistSaveButton = ft.Container(content=ft.ElevatedButton(text="Save Button",on_click=savePlaylist,width=100,bgcolor="black", color="white", disabled=True),bgcolor="transparent",left=880,top=10,padding=5,visible=False) # temporary save button
     playlistDeleteButton = ft.Container(content=ft.IconButton(on_click=delete_playlist,width=100,bgcolor="Red", icon_color="white", icon=ft.Icons.DELETE),bgcolor="transparent",left=880,top=10,padding=5,visible=False)
 
     playListSongs = ft.ListView(
@@ -696,8 +704,8 @@ def main(page: ft.Page):
 
     #? Editing Playlist
     editPlaylists = ft.ListView(controls=[edit_playlists_table], height=635, width=588, left=340, top=81, expand=True, visible=False)
-    edit_playlistNameField = ft.Container(content=ft.TextField(color="black",border_color="black", on_change=update_edit_fields),bgcolor="transparent",left=620,top=95,padding=10,visible=False, )
-    edit_playlistDescriptionField = ft.Container(content=ft.TextField(color="black",border_color="black", on_change=update_edit_fields),bgcolor="transparent",left=620,top=200,padding=10,visible=False)
+    edit_playlistNameField = ft.Container(content=ft.TextField(color="black",border_color="black", on_change=update_edit_fields, cursor_color="black"),bgcolor="transparent",left=620,top=95,padding=10,visible=False, )
+    edit_playlistDescriptionField = ft.Container(content=ft.TextField(color="black",border_color="black", on_change=update_edit_fields, cursor_color="black"),bgcolor="transparent",left=620,top=200,padding=10,visible=False)
 
 
     #? Songs stuff
